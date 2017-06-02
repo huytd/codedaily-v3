@@ -5,3 +5,6 @@ clean:
 
 crawler:
 	cargo r --bin crawler
+
+db:
+	psql -d postgres://huy@localhost/codedaily
