@@ -10,6 +10,7 @@ pub struct Site {
 }
 
 #[derive(Queryable)]
+#[derive(Serialize)]
 pub struct Link {
     pub id: i32,
     pub title: String,

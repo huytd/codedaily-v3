@@ -1,6 +1,9 @@
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate diesel_codegen;
 extern crate dotenv;
+extern crate serde;
+extern crate serde_json;
+#[macro_use] extern crate serde_derive;
 
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
