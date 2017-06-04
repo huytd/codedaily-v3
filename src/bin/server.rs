@@ -26,6 +26,11 @@ fn feed() -> JSON<Value> {
     }))
 }
 
+#[get("/")]
+fn index() -> io::Result<NamedFile> {
+    NamedFile::open("www/index.html")
+}
+
 #[get("/<file..>")]
 fn files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("www/").join(file)).ok()
@@ -33,7 +38,7 @@ fn files(file: PathBuf) -> Option<NamedFile> {
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes![files])
+        .mount("/", routes![index, files])
         .mount("/api/", routes![feed])
         .launch();
 }
