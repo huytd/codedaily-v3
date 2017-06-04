@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+$view-width: 60vw;
+
+html {
+  box-sizing: border-box;
+
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+}
+
+html, body {
+  width: 100%; height: 100%;
+  padding: 0; margin: 0;
+  background: #FDFDFD;
+  font-family: "Inconsolata";
+  font-size: 16px;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 500;
+  }
+}
+
+.container {
+  width: 100%; height: 100%;
+  padding: 0;
+  margin: 0 auto;
+
+  .header {
+    width: $view-width;
+    margin: 0 auto;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    padding: 20px;
+    cursor: default;
+    line-height: 32px;
+
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+
+    span {
+      background: #689F38;
+      color: #FFF;
+      width: 32px; height: 32px;
+      display: inline-block;
+      text-align: center; line-height: 32px;
+      border-radius: 3px;
+    }
+  }
+  
+  .content {
+    border-top: 1px solid #F6F6F6;
+
+    .main {
+      padding: 20px;
+      width: $view-width;
+      margin: 0 auto;
+    }
+
+    .link-list {
+      list-style: none;
+      counter-reset: codedaily-news-list;
+      margin: 0; padding: 0;
+      
+      li {
+        margin-bottom: 24px;
+        padding: 0;
+
+        a {
+          display: block;
+          text-decoration: none;
+          position: relative;
+          padding-left: 35px;
+          color: #555;
+
+          &:before {
+            content: counter(codedaily-news-list);
+            counter-increment: codedaily-news-list;
+            width: 24px; height: 24px;
+            display: block;
+            position: absolute;
+            top: 0; left: 0;
+            border-radius: 3px;
+            background: #FF8F00;
+            text-align: center;
+            line-height: 24px;
+            color: #FFF;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-right: 10px;
+          }
+
+          .post-title {
+            color: #333;
+            font-weight: 600;
+          }
+
+          &:hover {
+            .post-title {
+              color: #555;
+            }
+          }
+
+          &:visited {
+            opacity: 0.6;
+          }
+
+          .post-meta {
+            margin: 5px 0;
+            font-size: 0.8em;
+
+            span {
+              color: #FF8F00;
+              font-weight: bold;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    .header {
+      width: 100vw !important;
+    }
+  }
+  .content {
+    .main {
+      width: 100vw !important;
+    }
+  }
+}

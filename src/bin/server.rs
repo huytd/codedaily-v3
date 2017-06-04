@@ -12,14 +12,9 @@ use codedaily_backend::schema::links::dsl::*;
 use self::diesel::prelude::*;
 use diesel::pg::PgConnection;
 use rocket_contrib::{JSON, Value};
-
-#[get("/")]
-fn index() -> JSON<Value> {
-    JSON(json!({
-        "status": "success",
-        "message": "It's worked!"
-    }))
-}
+use std::io;
+use std::path::{Path, PathBuf};
+use rocket::response::NamedFile;
 
 #[get("/feed")]
 fn feed() -> JSON<Value> {
@@ -31,6 +26,14 @@ fn feed() -> JSON<Value> {
     }))
 }
 
+#[get("/<file..>")]
+fn files(file: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("www/").join(file)).ok()
+}
+
 fn main() {
-    rocket::ignite().mount("/", routes![index, feed]).launch();
+    rocket::ignite()
+        .mount("/", routes![files])
+        .mount("/api/", routes![feed])
+        .launch();
 }
