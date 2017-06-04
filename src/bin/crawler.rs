@@ -30,22 +30,29 @@ fn insert_link(conn: &PgConnection, post_url: &str, post_title: &str, post_time:
 }
 
 fn crawl_site(connection: &PgConnection, site: &Site) -> i32 {
-    let channel = Channel::from_url(&site.url).unwrap();
-    let mut latestcheck = site.last_check;
-    for item in channel.items() {
-        let post_title = item.title().unwrap_or("");
-        let post_url = item.link().unwrap_or("");
-        let pub_date = item.pub_date().unwrap_or("");
-        let post_time = DateTime::parse_from_rfc2822(pub_date).unwrap().timestamp() as i32;
-        if post_time > latestcheck {
-            latestcheck = post_time;
-        }
-        if post_time > site.last_check {
-            println!("{} : {} : {}", post_title, post_url, post_time);
-            insert_link(&connection, post_url, post_title, post_time);
+    let channel = Channel::from_url(&site.url).ok();
+    match channel {
+        Some(channel) => {
+            let mut latestcheck = site.last_check;
+            for item in channel.items() {
+                let post_title = item.title().unwrap_or("");
+                let post_url = item.link().unwrap_or("");
+                let pub_date = item.pub_date().unwrap_or("");
+                let post_time = DateTime::parse_from_rfc2822(pub_date).unwrap().timestamp() as i32;
+                if post_time > latestcheck {
+                    latestcheck = post_time;
+                }
+                if post_time > site.last_check {
+                    println!("{} : {} : {}", post_title, post_url, post_time);
+                    insert_link(&connection, post_url, post_title, post_time);
+                }
+            }
+            latestcheck
+        },
+        None => {
+            -1
         }
     }
-    latestcheck
 }
 
 fn save_last_check(connection: &PgConnection, site: &Site, last_check_time: i32) -> Site {
@@ -61,6 +68,8 @@ fn main() {
     println!("Scanning {} sites", results.len());
     for site in results {
         let last_check_time = crawl_site(&connection, &site);
-        save_last_check(&connection, &site, last_check_time);
+        if last_check_time != -1 {
+            save_last_check(&connection, &site, last_check_time);
+        }
     }
 }
