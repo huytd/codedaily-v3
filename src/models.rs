@@ -1,5 +1,4 @@
 use super::schema::links;
-use super::schema::sites;
 
 #[derive(Queryable)]
 pub struct Site {

@@ -10,7 +10,6 @@ use self::codedaily_backend::*;
 use self::codedaily_backend::models::*;
 use codedaily_backend::schema::links::dsl::*;
 use self::diesel::prelude::*;
-use diesel::pg::PgConnection;
 use rocket_contrib::{JSON, Value};
 use std::io;
 use std::path::{Path, PathBuf};
