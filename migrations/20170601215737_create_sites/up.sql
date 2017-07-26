@@ -1,0 +1,6 @@
+CREATE TABLE sites (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR NOT NULL,
+  url VARCHAR NOT NULL,
+  last_check INT NOT NULL
+)
