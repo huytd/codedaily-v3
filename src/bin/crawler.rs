@@ -48,13 +48,16 @@ fn crawl_site(connection: &PgConnection, site: &Site) -> i32 {
                 let post_title = item.title().unwrap_or("");
                 let post_url = item.link().unwrap_or("");
                 let pub_date = item.pub_date().unwrap_or("");
-                let post_time = DateTime::parse_from_rfc2822(pub_date).unwrap().timestamp() as i32;
-                if post_time > latestcheck {
-                    latestcheck = post_time;
-                }
-                if post_time > site.last_check {
-                    println!("{} : {} : {}", post_title, post_url, post_time);
-                    insert_link(&connection, post_url, post_title, post_time);
+                let parse_post_time = DateTime::parse_from_rfc2822(pub_date);
+                if parse_post_time.ok().is_some() {
+                    let post_time = parse_post_time.unwrap().timestamp() as i32;
+                    if post_time > latestcheck {
+                        latestcheck = post_time;
+                    }
+                    if post_time > site.last_check {
+                        println!("{} : {} : {}", post_title, post_url, post_time);
+                        insert_link(&connection, post_url, post_title, post_time);
+                    }
                 }
             }
             latestcheck

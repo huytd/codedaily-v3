@@ -14,7 +14,8 @@ use self::codedaily_backend::models::*;
 use codedaily_backend::schema::links::dsl::*;
 use codedaily_backend::schema::users::dsl::*;
 use self::diesel::prelude::*;
-use rocket_contrib::{JSON, Value};
+use self::diesel::associations::HasTable;
+use rocket_contrib::{Json, Value};
 use std::io;
 use std::path::{Path, PathBuf};
 use rocket::response::NamedFile;
@@ -30,7 +31,9 @@ fn encrypt_password(input: &str) -> String {
 }
 
 #[post("/users/register", format = "application/json", data = "<user>")]
-fn register_user(user: JSON<User>) -> JSON<Value> {
+fn register_user(user: Json<User>) -> Json<Value> {
+    use schema::users;
+
     let connection = establish_connection();
     let next_id = (users.count().get_result(&connection).unwrap_or(0) + 1) as i32;
     let new_user = User {
@@ -40,16 +43,15 @@ fn register_user(user: JSON<User>) -> JSON<Value> {
         password: encrypt_password(&user.password),
         enable: 1
     };
-    diesel::insert(&new_user).into(users::table)
-        .get_result(&connection)
-        .expect("Error registering new user");
-    JSON(json!({
-        "result": new_user
+    let result: User = diesel::insert(&new_user).into(users::table).get_result(&connection)
+                                                .expect("Error creating user");
+    Json(json!({
+        "result": result
     }))
 }
 
 #[get("/feed/<page>")]
-fn feed(page: i64) -> JSON<Value> {
+fn feed(page: i64) -> Json<Value> {
     let connection = establish_connection();
     let mut offset = (page - 1) * LINKS_PER_PAGE;
     if offset < 0 {
@@ -61,7 +63,7 @@ fn feed(page: i64) -> JSON<Value> {
     if total.is_some() {
         count = total.unwrap().len();
     }
-    JSON(json!({
+    Json(json!({
         "status": "success",
         "links": results,
         "total": count
