@@ -75,7 +75,7 @@ fn index() -> io::Result<NamedFile> {
     NamedFile::open("www/index.html")
 }
 
-#[get("/<file..>")]
+#[get("/<file..>", rank = 5)]
 fn files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("www/").join(file)).ok()
 }

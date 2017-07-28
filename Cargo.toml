@@ -6,7 +6,7 @@ authors = ["Huy Tran <kingbazoka@gmail.com>"]
 [dependencies]
 diesel = { version = "0.15.1", features = ["postgres"] }
 diesel_codegen = { version = "0.15.0", features = ["postgres"] }
-dotenv = "0.9.0"
+dotenv = "0.10.1"
 rss = { version = "*", features = ["from_url"] }
 chrono = "0.4.0"
 url = "1.5.1"
