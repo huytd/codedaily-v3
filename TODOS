@@ -8,7 +8,6 @@
 = [DONE] mean Fixed issue
 ---------------------------------------------------------------------------
 
-- [BACK] Implement User login system
 - [FRNT] Implement User login UI
 
 ---------------------------------------------------------------------------
@@ -30,3 +29,4 @@
 - [DONE][FRNT] Favicon is missing
 - [DONE][FRNT] Implement pagination
 - [DONE][BACK] Implement pagination API
+- [DONE][BACK] Implement User login system
