@@ -46,7 +46,7 @@ fn register_user(user: Json<User>) -> Json<Value> {
     };
 
     let found_exist_user: i32 = users.count()
-                                .filter(users::username.eq(&new_user.username))
+                                .filter(users::username.eq(&new_user.username).or(users::email.eq(&new_user.email)))
                                 .get_result(&connection).unwrap_or(0) as i32;
 
     if found_exist_user <= 0 {
@@ -60,6 +60,22 @@ fn register_user(user: Json<User>) -> Json<Value> {
             "result": false
         }))
     }
+}
+
+#[post("/users/login", format = "application/json", data="<user>")]
+fn login_user(user: Json<Value>) -> Json<Value> {
+    use schema::users;
+
+    let connection = establish_connection();
+
+    let t_username = user["username"].as_str().unwrap_or("");
+    let t_password = encrypt_password(user["password"].as_str().unwrap_or(""));
+
+    let found_user = users.filter(username.eq(t_username).and(password.eq(t_password)))
+                          .load::<User>(&connection).ok();
+    Json(json!({
+        "result": found_user
+    }))
 }
 
 #[get("/feed/<page>")]
@@ -94,7 +110,7 @@ fn files(file: PathBuf) -> Option<NamedFile> {
 
 fn main() {
     rocket::ignite()
-        .mount("/api/", routes![feed, register_user])
+        .mount("/api/", routes![feed, register_user, login_user])
         .mount("/", routes![index, files])
         .launch();
 }
