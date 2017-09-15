@@ -35,6 +35,7 @@ fn register_user(user: Json<User>) -> Json<Value> {
     use schema::users;
 
     let connection = establish_connection();
+
     let next_id = (users.count().get_result(&connection).unwrap_or(0) + 1) as i32;
     let new_user = User {
         id: next_id,
@@ -43,11 +44,22 @@ fn register_user(user: Json<User>) -> Json<Value> {
         password: encrypt_password(&user.password),
         enable: 1
     };
-    let result: User = diesel::insert(&new_user).into(users::table).get_result(&connection)
-                                                .expect("Error creating user");
-    Json(json!({
-        "result": result
-    }))
+
+    let found_exist_user: i32 = users.count()
+                                .filter(users::username.eq(&new_user.username))
+                                .get_result(&connection).unwrap_or(0) as i32;
+
+    if found_exist_user <= 0 {
+        let result: User = diesel::insert(&new_user).into(users::table).get_result(&connection)
+            .expect("Error creating user");
+        Json(json!({
+            "result": result
+        }))
+    } else {
+        Json(json!({
+            "result": false
+        }))
+    }
 }
 
 #[get("/feed/<page>")]
