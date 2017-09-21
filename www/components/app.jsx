@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 import Login from './login';
+import Register from './register';
 
 const LINKS_PER_PAGE = 30;
 
@@ -35,7 +36,8 @@ class App extends React.Component {
       currentPage: 1,
       isLoggedIn: false,
       loggedInUser: null,
-      showLogin: false
+      showLogin: false,
+      showRegister: false
     };
   }
 
@@ -74,6 +76,19 @@ class App extends React.Component {
     }
   }
 
+  showRegisterComponent() {
+    if (this.state.showRegister) {
+      return (<Register/>);
+    }
+    return "";
+  }
+
+  displayRegister() {
+    this.setState({
+      showRegister: true
+    });
+  }
+
   displayLogin() {
     this.setState({
       showLogin: true
@@ -101,7 +116,7 @@ class App extends React.Component {
     } else {
       return [
         (<li><a onClick={this.displayLogin.bind(this)}>Login</a></li>),
-        (<li><a onClick={this.displayLogin.bind(this)}>Register</a></li>)
+        (<li><a onClick={this.displayRegister.bind(this)}>Register</a></li>)
       ];
     }
   }
@@ -128,6 +143,7 @@ class App extends React.Component {
     return (
       <div className="container">
         { this.showLoginComponent() }
+        { this.showRegisterComponent() }
         <div className="header">
           <span>k</span> kipalog links
           <div className="user-control">
