@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
+import Login from './login';
 
 const LINKS_PER_PAGE = 30;
 
@@ -31,9 +32,78 @@ class App extends React.Component {
     this.state = {
       links: [],
       total: 0,
-      currentPage: 1
+      currentPage: 1,
+      isLoggedIn: false,
+      loggedInUser: null,
+      showLogin: false
     };
+  }
+
+  componentDidMount() {
     this.fetch_links();
+    this.checkForLogin();
+  }
+
+  checkForLogin() {
+    if (window.localStorage) {
+      let store = window.localStorage;
+      let last_login = store.getItem('kipalink_login_time');
+      let user = store.getItem('kipalink_user');
+      console.log(new Date(last_login));
+      if (last_login && user) {
+        let distance = Math.floor((new Date(last_login) - new Date()) / 86400000);
+          console.log("DISTANCE", distance);
+        if (distance <= 30) {
+          this.setState({
+            isLoggedIn: true,
+            loggedInUser: user
+          });
+        }
+      }
+    }
+  }
+
+  showLoginComponent() {
+    if (this.state.isLoggedIn) {
+      return "";
+    } else {
+      if (this.state.showLogin) {
+        return (<Login/>);
+      }
+      return "";
+    }
+  }
+
+  displayLogin() {
+    this.setState({
+      showLogin: true
+    });
+  }
+
+  doLogout() {
+    if (window.localStorage) {
+      let store = window.localStorage;
+      store.removeItem('kipalink_user');
+      store.removeItem('kipalink_email');
+      store.removeItem('kipalink_login_time');
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    }
+  }
+
+  showLoggedInUser() {
+    if (this.state.isLoggedIn) {
+      return [
+        (<li><a><b>{this.state.loggedInUser}</b></a></li>),
+        (<li><a onClick={this.doLogout}>Logout</a></li>)
+      ];
+    } else {
+      return [
+        (<li><a onClick={this.displayLogin.bind(this)}>Login</a></li>),
+        (<li><a onClick={this.displayLogin.bind(this)}>Register</a></li>)
+      ];
+    }
   }
   
   render() {
@@ -57,13 +127,14 @@ class App extends React.Component {
 
     return (
       <div className="container">
+        { this.showLoginComponent() }
         <div className="header">
           <span>k</span> kipalog links
           <div className="user-control">
             <ul className="filter-list">
               <li><a href="#">Top</a></li>
               <li><a className="active" href="#">Latest</a></li>
-              <li><a href="#">Login</a></li>
+              { this.showLoggedInUser() }
             </ul>
           </div>
         </div>

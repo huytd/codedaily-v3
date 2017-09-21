@@ -9546,6 +9546,10 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 
 __webpack_require__(188);
 
+var _login = __webpack_require__(189);
+
+var _login2 = _interopRequireDefault(_login);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9592,13 +9596,118 @@ var App = function (_React$Component) {
     _this.state = {
       links: [],
       total: 0,
-      currentPage: 1
+      currentPage: 1,
+      isLoggedIn: false,
+      loggedInUser: null,
+      showLogin: false
     };
-    _this.fetch_links();
     return _this;
   }
 
   _createClass(App, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.fetch_links();
+      this.checkForLogin();
+    }
+  }, {
+    key: 'checkForLogin',
+    value: function checkForLogin() {
+      if (window.localStorage) {
+        var store = window.localStorage;
+        var last_login = store.getItem('kipalink_login_time');
+        var user = store.getItem('kipalink_user');
+        console.log(new Date(last_login));
+        if (last_login && user) {
+          var distance = Math.floor((new Date(last_login) - new Date()) / 86400000);
+          console.log("DISTANCE", distance);
+          if (distance <= 30) {
+            this.setState({
+              isLoggedIn: true,
+              loggedInUser: user
+            });
+          }
+        }
+      }
+    }
+  }, {
+    key: 'showLoginComponent',
+    value: function showLoginComponent() {
+      if (this.state.isLoggedIn) {
+        return "";
+      } else {
+        if (this.state.showLogin) {
+          return _react2.default.createElement(_login2.default, null);
+        }
+        return "";
+      }
+    }
+  }, {
+    key: 'displayLogin',
+    value: function displayLogin() {
+      this.setState({
+        showLogin: true
+      });
+    }
+  }, {
+    key: 'doLogout',
+    value: function doLogout() {
+      if (window.localStorage) {
+        var store = window.localStorage;
+        store.removeItem('kipalink_user');
+        store.removeItem('kipalink_email');
+        store.removeItem('kipalink_login_time');
+        setTimeout(function () {
+          window.location.reload();
+        }, 100);
+      }
+    }
+  }, {
+    key: 'showLoggedInUser',
+    value: function showLoggedInUser() {
+      if (this.state.isLoggedIn) {
+        return [_react2.default.createElement(
+          'li',
+          null,
+          _react2.default.createElement(
+            'a',
+            null,
+            _react2.default.createElement(
+              'b',
+              null,
+              this.state.loggedInUser
+            )
+          )
+        ), _react2.default.createElement(
+          'li',
+          null,
+          _react2.default.createElement(
+            'a',
+            { onClick: this.doLogout },
+            'Logout'
+          )
+        )];
+      } else {
+        return [_react2.default.createElement(
+          'li',
+          null,
+          _react2.default.createElement(
+            'a',
+            { onClick: this.displayLogin.bind(this) },
+            'Login'
+          )
+        ), _react2.default.createElement(
+          'li',
+          null,
+          _react2.default.createElement(
+            'a',
+            { onClick: this.displayLogin.bind(this) },
+            'Register'
+          )
+        )];
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
@@ -9649,6 +9758,7 @@ var App = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         { className: 'container' },
+        this.showLoginComponent(),
         _react2.default.createElement(
           'div',
           { className: 'header' },
@@ -9682,15 +9792,7 @@ var App = function (_React$Component) {
                   'Latest'
                 )
               ),
-              _react2.default.createElement(
-                'li',
-                null,
-                _react2.default.createElement(
-                  'a',
-                  { href: '#' },
-                  'Login'
-                )
-              )
+              this.showLoggedInUser()
             )
           )
         ),
@@ -9786,7 +9888,7 @@ exports = module.exports = __webpack_require__(86)(undefined);
 exports.push([module.i, "@import url(https://fonts.googleapis.com/css?family=Inconsolata);", ""]);
 
 // module
-exports.push([module.i, "html {\n  box-sizing: border-box; }\n  html *, html *:before, html *:after {\n    box-sizing: inherit; }\n\nhtml, body {\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0;\n  background: #FDFDFD;\n  font-family: \"Inconsolata\", -apple-system, BlinkMacSystemFont,\"Segoe UI\",Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\";\n  font-size: 16px; }\n  html h1, html h2, html h3, html h4, html h5, html h6, body h1, body h2, body h3, body h4, body h5, body h6 {\n    font-weight: 500; }\n\n.container {\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0 auto; }\n  .container .header {\n    width: 60vw;\n    margin: 0 auto;\n    font-size: 20px;\n    font-weight: 600;\n    color: #333;\n    padding: 20px;\n    cursor: default;\n    line-height: 32px;\n    position: relative;\n    user-select: none;\n    -moz-user-select: none;\n    -khtml-user-select: none;\n    -webkit-user-select: none;\n    -o-user-select: none; }\n    .container .header span {\n      background: #689F38;\n      color: #FFF;\n      width: 32px;\n      height: 32px;\n      display: inline-block;\n      text-align: center;\n      line-height: 32px;\n      border-radius: 3px; }\n    .container .header .user-control {\n      width: auto;\n      height: 32px;\n      position: absolute;\n      top: 20px;\n      right: 20px;\n      font-size: 16px;\n      line-height: 32px;\n      text-align: right; }\n      .container .header .user-control .filter-list {\n        list-style: none;\n        margin: 0;\n        padding: 0;\n        text-align: right; }\n        .container .header .user-control .filter-list:after {\n          content: \".\";\n          display: block;\n          visibility: hidden;\n          clear: both; }\n        .container .header .user-control .filter-list li {\n          display: inline-block; }\n          .container .header .user-control .filter-list li a {\n            color: #333;\n            text-decoration: none;\n            padding: 5px 8px;\n            border-radius: 3px;\n            font-weight: normal; }\n            .container .header .user-control .filter-list li a:hover {\n              color: #CCC; }\n            .container .header .user-control .filter-list li a.active {\n              background: #F0F0F0;\n              color: #333;\n              font-weight: bold; }\n  .container .content {\n    border-top: 1px solid #F6F6F6; }\n    .container .content .main {\n      padding: 20px;\n      width: 60vw;\n      margin: 0 auto; }\n    .container .content .link-list {\n      list-style: none;\n      counter-reset: codedaily-news-list;\n      margin: 0;\n      padding: 0; }\n      .container .content .link-list li {\n        margin-bottom: 24px;\n        padding: 0; }\n        .container .content .link-list li a {\n          display: block;\n          text-decoration: none;\n          position: relative;\n          padding-left: 35px;\n          color: #555; }\n          .container .content .link-list li a:before {\n            content: counter(codedaily-news-list);\n            counter-increment: codedaily-news-list;\n            width: 24px;\n            height: 24px;\n            display: block;\n            position: absolute;\n            top: 0;\n            left: 0;\n            border-radius: 3px;\n            background: #FF8F00;\n            text-align: center;\n            line-height: 24px;\n            color: #FFF;\n            font-size: 0.8em;\n            font-weight: bold;\n            margin-right: 10px; }\n          .container .content .link-list li a .post-title {\n            color: #333;\n            font-weight: 600; }\n          .container .content .link-list li a:hover .post-title {\n            color: #555; }\n          .container .content .link-list li a:visited {\n            opacity: 0.6; }\n          .container .content .link-list li a .post-meta {\n            margin: 5px 0;\n            font-size: 0.8em; }\n            .container .content .link-list li a .post-meta span {\n              color: #FF8F00;\n              font-weight: bold; }\n    .container .content .pagination {\n      margin: 0;\n      padding: 5px;\n      list-style: none;\n      text-align: center; }\n      .container .content .pagination li {\n        display: inline-block;\n        cursor: pointer;\n        width: 24px;\n        height: 24px;\n        line-height: 24px;\n        text-align: center;\n        border-radius: 5px; }\n        .container .content .pagination li:hover {\n          color: #689F38; }\n        .container .content .pagination li.active {\n          background: #689F38;\n          color: #FFF; }\n\n@media (max-width: 768px) {\n  .container .header {\n    width: 100vw !important; }\n  .content .main {\n    width: 100vw !important; } }\n\n::-webkit-scrollbar-track {\n  background-color: #eeeeee; }\n\n::-webkit-scrollbar {\n  width: 8px;\n  background-color: #cccccc; }\n\n::-webkit-scrollbar-thumb {\n  background-color: #cccccc;\n  border: none; }\n", ""]);
+exports.push([module.i, "html {\n  box-sizing: border-box; }\n  html *, html *:before, html *:after {\n    box-sizing: inherit; }\n\nhtml, body {\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0;\n  background: #FDFDFD;\n  font-family: \"Inconsolata\", -apple-system, BlinkMacSystemFont,\"Segoe UI\",Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\";\n  font-size: 16px; }\n  html h1, html h2, html h3, html h4, html h5, html h6, body h1, body h2, body h3, body h4, body h5, body h6 {\n    font-weight: 500; }\n\n.container {\n  width: 100%;\n  height: 100%;\n  padding: 0;\n  margin: 0 auto; }\n  .container .header {\n    width: 60vw;\n    margin: 0 auto;\n    font-size: 20px;\n    font-weight: 600;\n    color: #333;\n    padding: 20px;\n    cursor: default;\n    line-height: 32px;\n    position: relative;\n    user-select: none;\n    -moz-user-select: none;\n    -khtml-user-select: none;\n    -webkit-user-select: none;\n    -o-user-select: none; }\n    .container .header span {\n      background: #689F38;\n      color: #FFF;\n      width: 32px;\n      height: 32px;\n      display: inline-block;\n      text-align: center;\n      line-height: 32px;\n      border-radius: 3px; }\n    .container .header .user-control {\n      width: auto;\n      height: 32px;\n      position: absolute;\n      top: 20px;\n      right: 20px;\n      font-size: 16px;\n      line-height: 32px;\n      text-align: right; }\n      .container .header .user-control .filter-list {\n        list-style: none;\n        margin: 0;\n        padding: 0;\n        text-align: right; }\n        .container .header .user-control .filter-list:after {\n          content: \".\";\n          display: block;\n          visibility: hidden;\n          clear: both; }\n        .container .header .user-control .filter-list li {\n          display: inline-block; }\n          .container .header .user-control .filter-list li:before {\n            content: \"|\";\n            padding: 0 10px; }\n          .container .header .user-control .filter-list li:first-child:before {\n            content: \"\"; }\n          .container .header .user-control .filter-list li a {\n            color: #333;\n            text-decoration: none;\n            padding: 5px 8px;\n            border-radius: 3px;\n            font-weight: normal; }\n            .container .header .user-control .filter-list li a:hover {\n              color: #CCC; }\n            .container .header .user-control .filter-list li a.active {\n              background: #F0F0F0;\n              color: #333;\n              font-weight: bold; }\n  .container .content {\n    border-top: 1px solid #F6F6F6; }\n    .container .content .main {\n      padding: 20px;\n      width: 60vw;\n      margin: 0 auto; }\n    .container .content .link-list {\n      list-style: none;\n      counter-reset: codedaily-news-list;\n      margin: 0;\n      padding: 0; }\n      .container .content .link-list li {\n        margin-bottom: 24px;\n        padding: 0; }\n        .container .content .link-list li a {\n          display: block;\n          text-decoration: none;\n          position: relative;\n          padding-left: 35px;\n          color: #555; }\n          .container .content .link-list li a:before {\n            content: counter(codedaily-news-list);\n            counter-increment: codedaily-news-list;\n            width: 24px;\n            height: 24px;\n            display: block;\n            position: absolute;\n            top: 0;\n            left: 0;\n            border-radius: 3px;\n            background: #FF8F00;\n            text-align: center;\n            line-height: 24px;\n            color: #FFF;\n            font-size: 0.8em;\n            font-weight: bold;\n            margin-right: 10px; }\n          .container .content .link-list li a .post-title {\n            color: #333;\n            font-weight: 600; }\n          .container .content .link-list li a:hover .post-title {\n            color: #555; }\n          .container .content .link-list li a:visited {\n            opacity: 0.6; }\n          .container .content .link-list li a .post-meta {\n            margin: 5px 0;\n            font-size: 0.8em; }\n            .container .content .link-list li a .post-meta span {\n              color: #FF8F00;\n              font-weight: bold; }\n    .container .content .pagination {\n      margin: 0;\n      padding: 5px;\n      list-style: none;\n      text-align: center; }\n      .container .content .pagination li {\n        display: inline-block;\n        cursor: pointer;\n        width: 24px;\n        height: 24px;\n        line-height: 24px;\n        text-align: center;\n        border-radius: 5px; }\n        .container .content .pagination li:hover {\n          color: #689F38; }\n        .container .content .pagination li.active {\n          background: #689F38;\n          color: #FFF; }\n\n@media (max-width: 768px) {\n  .container .header {\n    width: 100vw !important; }\n  .content .main {\n    width: 100vw !important; } }\n\n::-webkit-scrollbar-track {\n  background-color: #eeeeee; }\n\n::-webkit-scrollbar {\n  width: 8px;\n  background-color: #cccccc; }\n\n::-webkit-scrollbar-thumb {\n  background-color: #cccccc;\n  border: none; }\n\n.login-box {\n  width: 100%;\n  height: 100%;\n  padding: 20px;\n  position: fixed;\n  top: 0;\n  left: 0;\n  background: #fff;\n  z-index: 999; }\n  .login-box input[type=text], .login-box input[type=password] {\n    border: none;\n    outline: none;\n    font-family: \"Inconsolata\", -apple-system, BlinkMacSystemFont,\"Segoe UI\",Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\";\n    font-size: 16px; }\n  .login-box .step-show {\n    display: block; }\n  .login-box .step-hide {\n    display: none; }\n", ""]);
 
 // exports
 
@@ -23280,6 +23382,181 @@ module.exports = function (css) {
   self.fetch.polyfill = true
 })(typeof self !== 'undefined' ? self : this);
 
+
+/***/ }),
+/* 189 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(51);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(50);
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+__webpack_require__(188);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var user_input = null;
+var password_input = null;
+
+var Login = function (_React$Component) {
+  _inherits(Login, _React$Component);
+
+  function Login(props) {
+    _classCallCheck(this, Login);
+
+    var _this = _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this, props));
+
+    _this.state = {
+      step: 1,
+      message: ''
+    };
+    return _this;
+  }
+
+  _createClass(Login, [{
+    key: 'doLogin',
+    value: function doLogin() {
+      var _this2 = this;
+
+      var that = this;
+      var username = user_input.value;
+      var password = password_input.value;
+
+      fetch('/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      }).then(function (response) {
+        return response.json();
+      }).then(function (json) {
+        console.log(json);
+        if (Array.isArray(json.result) && json.result.length > 0) {
+          var user = json.result.pop();
+          _this2.setState({
+            message: 'Hey ' + user.username + '! Welcome back, dude!'
+          });
+          if (window.localStorage) {
+            var store = window.localStorage;
+            store.setItem('kipalink_user', user.username);
+            store.setItem('kipalink_email', user.email);
+            store.setItem('kipalink_login_time', new Date());
+            setTimeout(function () {
+              window.location.reload();
+            }, 500);
+          }
+        } else {
+          _this2.setState({
+            message: 'Sorry, wrong username and password!'
+          });
+        }
+      });
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      user_input.focus();
+    }
+  }, {
+    key: 'showPasswordStep',
+    value: function showPasswordStep() {
+      return this.state.step > 1 ? "step-show" : "step-hide";
+    }
+  }, {
+    key: 'detectEnterKey',
+    value: function detectEnterKey(id, event) {
+      var key = event.keyCode || event.which || event.code;
+      if (key === 13) {
+        if (id === 1) {
+          this.setState({ step: 2 });
+          setTimeout(function () {
+            password_input.focus();
+          }, 100);
+        }
+        if (id === 2) {
+          this.doLogin();
+        }
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        { className: 'login-box' },
+        _react2.default.createElement(
+          'p',
+          null,
+          _react2.default.createElement(
+            'b',
+            null,
+            '$ kipalog --version'
+          ),
+          _react2.default.createElement('br', null),
+          ' kipalink-0.1.0c build 2017.09.21b'
+        ),
+        _react2.default.createElement(
+          'p',
+          null,
+          _react2.default.createElement(
+            'b',
+            null,
+            '$ kipalog login'
+          ),
+          _react2.default.createElement('br', null),
+          _react2.default.createElement(
+            'div',
+            null,
+            'What is your username? ',
+            _react2.default.createElement('input', { ref: function ref(input) {
+                user_input = input;
+              }, type: 'text', onKeyPress: this.detectEnterKey.bind(this, 1) })
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: this.showPasswordStep() },
+            'Enter your password: ',
+            _react2.default.createElement('input', { ref: function ref(pinput) {
+                password_input = pinput;
+              }, type: 'password', onKeyPress: this.detectEnterKey.bind(this, 2) })
+          )
+        ),
+        _react2.default.createElement(
+          'p',
+          null,
+          this.state.message
+        )
+      );
+    }
+  }]);
+
+  return Login;
+}(_react2.default.Component);
+
+exports.default = Login;
 
 /***/ })
 /******/ ]);
