@@ -1,0 +1,14 @@
+= VOTING SYSTEM
+
+The idea of the voting system is inspired by Reddit.
+
+In our system, we will provide a voting API and a vote querying API
+that can be integrated with our web-based front-end.
+
+The benefit of such API is to provide a voting system where users
+can show whether they agree / disagree on a topic/artical.
+
+  Database      Server      Web UI
+      |           |           |
+   <--o---(save)--o--(vote)---o-->
+      o---(load)--o--(query)--o-->
