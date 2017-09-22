@@ -15,7 +15,9 @@ will be stored in our database, based on the URL of the article.
   Database      Server      Web UI    Author's Website
       |           |           |              |
    <--o.--(save)--o-(comment)-o              |
-        `-(save)--o--------------------------o
+        `-(save)--o-----------|--------------o
+      o--(load)---o--(query)--o-->           |
+      o--(load)---o--(remote query)----------o-->
 
 We will not implement Salmon Protocol, but a simple RESTful API
 and an embedable JavaScript library to load/post comment on the
