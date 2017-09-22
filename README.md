@@ -6,6 +6,8 @@ Live demo: https://news.kipalog.com/
 
 ### Install Rust
 
+Required Rust version: **nightly**. We hate comfort zone.
+
 Follow instructions [install rust](https://www.rust-lang.org/en-US/install.html)
 
 ### DB
@@ -19,17 +21,18 @@ Use Postgres
 
 Copy file `.env.example` to `.env` and add your config db url.
 
-### Install deps
+### Install
 
-Run command: `cargo install`
+```
+1. Install Diesel
+cargo install diesel_cli --no-default-features --features=postgres
 
-### Install diesel-cli
+2. Migrate DB
+diesel migration run
 
-Run command: `cargo install diesel_cli --no-default-features --features=postgresql`
-
-### Migrations DB
-
-Run command: `diesel migration run`
+3. Install deps
+cargo install
+```
 
 ### Run local development server
 
