@@ -1,0 +1,26 @@
+= Unified Comment System
+
+The idea of the comment system is inspired by Salmon Protocol [1].
+
+In our system, we will provide a public comment API that can be 
+integrated with any frontend, including our web-based frontend.
+
+The benefit of such API is to provide an unified comment system
+that the user will be able to comment on the same topic/article
+no matter where he/she is. They can comment directly on Kipalink
+or the Authors can integrate the comment API on to his/her website
+to let the users discuss directly on the site. All of the comment
+will be stored in our database, based on the URL of the article.
+
+  Database      Server      Web UI    Author's Website
+      |           |           |              |
+   <--o.--(save)--o-(comment)-o              |
+        `-(save)--o--------------------------o
+
+We will not implement Salmon Protocol, but a simple RESTful API
+and an embedable JavaScript library to load/post comment on the
+frontends.
+
+= References
+
+[1] Salmon Protocol (https://en.wikipedia.org/wiki/Salmon_%28protocol%29)
