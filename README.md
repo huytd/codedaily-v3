@@ -25,7 +25,7 @@ Run command: `cargo install`
 
 ### Install diesel-cli
 
-Run command: `cargo install diesel_cli --no-default-features --features=postgresql`
+Run command: `cargo install diesel_cli --no-default-features --features=postgres`
 
 ### Migrations DB
 
