@@ -8,8 +8,7 @@
 = [DONE] mean Fixed issue
 ---------------------------------------------------------------------------
 
-- [BACK] Implement comment API
-- [FRNT] Implement comment UI
+- [FRNT] Implement User login UI
 
 ---------------------------------------------------------------------------
 - [HOLD][FRNT] Implement Admin Dashboard
@@ -31,4 +30,3 @@
 - [DONE][FRNT] Implement pagination
 - [DONE][BACK] Implement pagination API
 - [DONE][BACK] Implement User login system
-- [DONE][FRNT] Implement User login UI
