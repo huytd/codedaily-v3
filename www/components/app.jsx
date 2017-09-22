@@ -145,7 +145,7 @@ class App extends React.Component {
         { this.showLoginComponent() }
         { this.showRegisterComponent() }
         <div className="header">
-          <span>k</span> kipalog links
+          <span>k</span> <a className="kipalog-link">kipalog links</a>
           <div className="user-control">
             <ul className="filter-list">
               <li><a href="#">Top</a></li>
