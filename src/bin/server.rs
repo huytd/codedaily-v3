@@ -64,7 +64,6 @@ fn register_user(user: Json<User>) -> Json<Value> {
 
 #[post("/users/login", format = "application/json", data="<user>")]
 fn login_user(user: Json<Value>) -> Json<Value> {
-    use schema::users;
     use schema::auth_tokens;
 
     let connection = establish_connection();
@@ -72,54 +71,48 @@ fn login_user(user: Json<Value>) -> Json<Value> {
     let t_username = user["username"].as_str().unwrap_or("");
     let t_password = encrypt_password(user["password"].as_str().unwrap_or(""));
 
-    let result = users.filter(username.eq(t_username).and(password.eq(t_password)))
-                          .load::<User>(&connection).ok()
-                          .unwrap();
+    let result = User::find_by_login(&connection, t_username, t_password.as_str());
 
-    if result.len() > 0 {
-        let user = result.first().unwrap();
-        let rand_hash = gen_random_hash();
-        let expired_at = (epoch_now() as i64) + 30 * 24 * 60 * 60; // 30 days
-        let new_auth_token = AuthToken {
-            token: rand_hash,
-            expired_at: expired_at,
-            user_id: user.id,
-        };
-        let result: AuthToken = diesel::insert(&new_auth_token).into(auth_tokens::table).get_result(&connection)
-            .expect("Error creating auth token");
+    match result {
+        Ok(user) => {
+            let rand_hash = gen_random_hash();
+            let expired_at = (epoch_now() as i64) + 30 * 24 * 60 * 60; // 30 days
+            let new_auth_token = AuthToken {
+                token: rand_hash,
+                expired_at: expired_at,
+                user_id: user.id,
+            };
+            let result: AuthToken = diesel::insert(&new_auth_token).into(auth_tokens::table).get_result(&connection)
+                .expect("Error creating auth token");
 
-        Json(json!({
-            "result": true,
-            "user": {
-                "username": user.username,
-                "email": user.email,
-            },
-            "token": result.token,
-        }))
-    } else {
-        Json(json!({
-            "result": false,
-        }))
+            Json(json!({
+                "result": true,
+                "user": {
+                    "username": user.username,
+                    "email": user.email,
+                },
+                "token": result.token,
+            }))
+        },
+        Err(_) => {
+            return Json(json!({
+                "result": false,
+            }));
+        }
     }
 }
 
 #[get("/users/me")]
 fn get_user(auth: Auth) -> Json<Value> {
-    use schema::auth_tokens;
-    use schema::users;
-    use codedaily_backend::schema::auth_tokens::dsl::*;
-
     let connection = establish_connection();
 
-    let user = users.filter(users::id.eq(auth.user_id))
-        .load::<User>(&connection).ok().unwrap();
-    let user = user.first().unwrap();
+    let user = User::find(&connection, auth.user_id).unwrap();
 
     Json(json!({
         "result": true,
         "user": {
             "username": user.username,
-            "email": user.email, // not sure if returning user email is a good idea
+            "email": user.email,
         },
         "token": auth.token,
     }))

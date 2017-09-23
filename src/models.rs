@@ -1,8 +1,12 @@
 extern crate serde_json;
+extern crate diesel;
 
 use super::schema::links;
 use super::schema::users;
 use super::schema::auth_tokens;
+use diesel::pg::PgConnection;
+use self::diesel::prelude::*;
+use self::diesel::associations::HasTable;
 
 #[derive(Queryable)]
 pub struct Site {
@@ -48,6 +52,36 @@ pub struct NewUser {
     pub email: String,
     pub password: String,
     pub enable: i32
+}
+
+impl User {
+    pub fn find(conn: &PgConnection, id: i32) -> Result<User, ()> {
+        use schema::users;
+        use super::schema::users::dsl;
+
+        let found_users = dsl::users.filter(dsl::id.eq(id))
+            .load::<User>(conn).ok().unwrap();
+
+        if found_users.len() > 0 {
+            return Ok(found_users.first().unwrap().clone());
+        } else {
+            return Err(());
+        }
+    }
+
+    pub fn find_by_login(conn: &PgConnection, t_username: &str, t_password: &str) -> Result<User, ()> {
+        use schema::users;
+        use super::schema::users::dsl::*;
+
+        let found_users = users.filter(username.eq(t_username).and(password.eq(t_password)))
+            .load::<User>(conn).ok().unwrap();
+
+        if found_users.len() > 0 {
+            return Ok(found_users.first().unwrap().clone());
+        } else {
+            return Err(());
+        }
+    }
 }
 
 #[table_name="auth_tokens"]
