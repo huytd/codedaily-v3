@@ -274,8 +274,8 @@ html, body {
       border: 1px solid rgba(0,0,0,.15);
       background-color: white;
       border-radius: 2px;
-      width: 3.5em;
-      height: 3.5em;
+      width: 2.5em;
+      height: 2.5em;
       display: inline-block;
       background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
     }
@@ -284,6 +284,9 @@ html, body {
       display: flex;
       flex-direction: column;
       width: 100%;
+      margin: 15px 0 !important;
+      z-index: 1000;
+      background: #fff;
         li {
           &:before {
             content: "" !important;
