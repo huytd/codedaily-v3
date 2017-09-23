@@ -12,6 +12,8 @@ use std::env;
 
 pub mod schema;
 pub mod models;
+pub mod middleware;
+pub mod helpers;
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
