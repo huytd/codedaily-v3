@@ -13,6 +13,7 @@ use self::codedaily_backend::*;
 use self::codedaily_backend::models::*;
 use codedaily_backend::schema::links::dsl::*;
 use codedaily_backend::schema::users::dsl::*;
+use codedaily_backend::schema::votes::dsl::*;
 use self::diesel::prelude::*;
 use self::diesel::associations::HasTable;
 use rocket_contrib::{Json, Value};
@@ -78,6 +79,41 @@ fn login_user(user: Json<Value>) -> Json<Value> {
     }))
 }
 
+#[post("/vote", format = "application/json", data="<param>")]
+fn vote_link(param: Json<VoteParam>) -> Json<Value> {
+    use schema::votes;
+
+    let connection = establish_connection();
+
+    let current_user_id = 100;
+
+    let found_votes =
+        votes
+        .filter(link_id.eq(param.link_id).and(user_id.eq(current_user_id)))
+        .load::<Vote>(&connection).ok()
+        .unwrap();
+
+    if found_votes.len() > 0 {
+        let found_vote = found_votes.first().unwrap();
+        let updated = diesel::update(votes.find(found_vote.id))
+            .set(dir.eq(param.dir))
+            .get_result::<Vote>(&connection)
+            .expect("Error updating vote");
+    } else {
+        let vote = NewVote {
+            dir: param.dir,
+            link_id: param.link_id,
+            user_id: current_user_id,
+        };
+
+        let _result: Vote = diesel::insert(&vote).into(votes::table).get_result(&connection)
+            .expect("Error creating vote");
+    }
+
+    Json(json!({"result": true}))
+
+}
+
 #[get("/feed/<page>")]
 fn feed(page: i64) -> Json<Value> {
     let connection = establish_connection();
@@ -110,7 +146,7 @@ fn files(file: PathBuf) -> Option<NamedFile> {
 
 fn main() {
     rocket::ignite()
-        .mount("/api/", routes![feed, register_user, login_user])
+        .mount("/api/", routes![feed, register_user, login_user, vote_link])
         .mount("/", routes![index, files])
         .launch();
 }
