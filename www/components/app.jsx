@@ -37,13 +37,21 @@ class App extends React.Component {
       isLoggedIn: false,
       loggedInUser: null,
       showLogin: false,
-      showRegister: false
+      showRegister: false,
+      menuActive: false
     };
   }
 
   componentDidMount() {
     this.fetch_links();
     this.checkForLogin();
+  }
+
+  toggleMenu() {
+    let menuState = !this.state.menuActive;
+    this.setState({
+      menuActive: menuState
+    });
   }
 
   checkForLogin() {
@@ -147,7 +155,8 @@ class App extends React.Component {
         <div className="header">
           <span>k</span> kipalog links
           <div className="user-control">
-            <ul className="filter-list">
+            <button className="toggle-icon" onClick={this.toggleMenu.bind(this)}></button>
+            <ul className={"filter-list" + (this.state.menuActive ? " show": " hide")}>
               <li><a href="#">Top</a></li>
               <li><a className="active" href="#">Latest</a></li>
               { this.showLoggedInUser() }
