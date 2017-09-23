@@ -1,4 +1,4 @@
-# Codedaily 
+# Codedaily [![Build Status](https://travis-ci.org/huytd/codedaily-v3.svg?branch=master)](https://travis-ci.org/huytd/codedaily-v3)
 
 Live demo: https://news.kipalog.com/
 
