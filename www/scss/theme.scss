@@ -202,6 +202,10 @@ html, body {
       }
     }
   }
+
+  .toggle-icon {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
@@ -260,7 +264,51 @@ html, body {
 
 @media only screen and (max-width: 640px) {
   .container {
-    .kipalog-link {
+    .user-control {
+      width: 100% !important;
+      display: block;
+    }
+
+    .toggle-icon {
+      position: relative;
+      border: 1px solid rgba(0,0,0,.15);
+      background-color: white;
+      border-radius: 2px;
+      width: 3.5em;
+      height: 3.5em;
+      display: inline-block;
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+    }
+
+    .filter-list {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+        li {
+          &:before {
+            content: "" !important;
+          }
+          margin-top: 8px;
+          margin-left: 8px;
+          display: flex !important;
+          flex-direction: row;
+          justify-content: flex-start;
+          a {
+            &:before {
+              content: "";
+            }
+            width: 100%;
+            text-align: left;
+            padding: 0 17px !important;
+          }
+        }
+    }
+
+    .show {
+      position: absolute;
+    }
+
+    .hide {
       display: none;
     }
   }
