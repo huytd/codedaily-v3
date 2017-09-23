@@ -1,10 +1,12 @@
 extern crate rocket;
+extern crate diesel;
 
 use self::rocket::Outcome;
 use self::rocket::http::Status;
 use self::rocket::request::{self, Request, FromRequest};
 use models::*;
-use ::*;
+use self::diesel::prelude::*;
+use establish_connection;
 use diesel::pg::PgConnection;
 use std::time::Instant;
 
