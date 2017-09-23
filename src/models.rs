@@ -2,6 +2,7 @@ extern crate serde_json;
 
 use super::schema::links;
 use super::schema::users;
+use super::schema::auth_tokens;
 
 #[derive(Queryable)]
 pub struct Site {
@@ -47,4 +48,12 @@ pub struct NewUser {
     pub email: String,
     pub password: String,
     pub enable: i32
+}
+
+#[table_name="auth_tokens"]
+#[derive(Queryable, Serialize, Insertable, Deserialize, Debug, Clone)]
+pub struct AuthToken {
+    pub token: String,
+    pub user_id: i32,
+    pub expired_at: i64,
 }
