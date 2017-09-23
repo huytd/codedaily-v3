@@ -5,7 +5,7 @@ services:
   - postgresql
 before_script:
   - psql -c 'create database codedaily_test;' -U postgres
-  - echo "postgres://postgres@localhost/codedaily_test" > .env
+  - echo "DATABASE_URL=postgres://postgres@localhost/codedaily_test" > .env
   - cargo install diesel_cli --no-default-features --features=postgres
   - diesel migration run
 script:
