@@ -7,7 +7,10 @@ services:
 before_script:
   - psql -c 'create database codedaily_test;' -U postgres
   - echo "DATABASE_URL=postgres://postgres@localhost/codedaily_test" > .env
-  - cargo install diesel_cli --no-default-features --features=postgres
+  - DIESEL=$(which diesel)
+    if [[ !- e $DIESEL ]]; then
+      cargo install diesel_cli --no-default-features --features=postgres
+    fi
   - diesel migration run
 script:
   - cargo build --verbose --all
