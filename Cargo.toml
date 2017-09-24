@@ -18,6 +18,7 @@ serde_derive = "1.0.11"
 r2d2 = "0.7.3"
 r2d2-diesel = "0.15.0"
 rust-crypto = "0.2.36"
+rand = "0.3"
 
 [dependencies.rocket_contrib]
 default-features = false

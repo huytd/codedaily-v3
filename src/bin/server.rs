@@ -11,6 +11,8 @@ extern crate diesel;
 
 use self::codedaily_backend::*;
 use self::codedaily_backend::models::*;
+use self::codedaily_backend::middleware::Auth;
+use self::codedaily_backend::helpers::*;
 use codedaily_backend::schema::links::dsl::*;
 use codedaily_backend::schema::users::dsl::*;
 use self::diesel::prelude::*;
@@ -62,17 +64,57 @@ fn register_user(user: Json<User>) -> Json<Value> {
 
 #[post("/users/login", format = "application/json", data="<user>")]
 fn login_user(user: Json<Value>) -> Json<Value> {
-    use schema::users;
+    use schema::auth_tokens;
 
     let connection = establish_connection();
 
     let t_username = user["username"].as_str().unwrap_or("");
     let t_password = encrypt_password(user["password"].as_str().unwrap_or(""));
 
-    let found_user = users.filter(username.eq(t_username).and(password.eq(t_password)))
-                          .load::<User>(&connection).ok();
+    let result = User::find_by_login(&connection, t_username, t_password.as_str());
+
+    match result {
+        Ok(user) => {
+            let rand_hash = gen_random_hash();
+            let expired_at = (epoch_now() as i64) + 30 * 24 * 60 * 60; // 30 days
+            let new_auth_token = AuthToken {
+                token: rand_hash,
+                expired_at: expired_at,
+                user_id: user.id,
+            };
+            let result: AuthToken = diesel::insert(&new_auth_token).into(auth_tokens::table).get_result(&connection)
+                .expect("Error creating auth token");
+
+            Json(json!({
+                "result": true,
+                "user": {
+                    "username": user.username,
+                    "email": user.email,
+                },
+                "token": result.token,
+            }))
+        },
+        Err(_) => {
+            Json(json!({
+                "result": false,
+            }))
+        }
+    }
+}
+
+#[get("/users/me")]
+fn get_user(auth: Auth) -> Json<Value> {
+    let connection = establish_connection();
+
+    let user = User::find(&connection, auth.user_id).unwrap();
+
     Json(json!({
-        "result": found_user
+        "result": true,
+        "user": {
+            "username": user.username,
+            "email": user.email,
+        },
+        "token": auth.token,
     }))
 }
 
@@ -108,7 +150,7 @@ fn files(file: PathBuf) -> Option<NamedFile> {
 
 fn main() {
     rocket::ignite()
-        .mount("/api/", routes![feed, register_user, login_user])
+        .mount("/api/", routes![feed, register_user, login_user, get_user])
         .mount("/", routes![index, files])
         .launch();
 }
