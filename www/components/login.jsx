@@ -32,8 +32,8 @@ class Login extends React.Component {
       .then(response => response.json())
       .then(json => {
         console.log(json);
-        if (Array.isArray(json.result) && json.result.length > 0) {
-          let user = json.result.pop();
+        if (json.result && json.user && json.token) {
+          let user = json.user;
           this.setState({
             message: `Hey ${user.username}! Welcome back, dude!`
           });
@@ -42,6 +42,7 @@ class Login extends React.Component {
             store.setItem('kipalink_user', user.username);
             store.setItem('kipalink_email', user.email);
             store.setItem('kipalink_login_time', new Date());
+            store.setItem('kipalink_token', json.token);
             setTimeout(() => {
               window.location.reload();
             }, 500);
@@ -79,7 +80,7 @@ class Login extends React.Component {
   
   render() {
     return (
-      <div className="login-box">
+      <div key="login" className="login-box">
         <p><b>$ kipalog --version</b><br/> kipalink-0.1.0c build 2017.09.21b</p>
         <p><b>$ kipalog login</b><br/>
           <div>What is your username? <input ref={(input) => { user_input = input; }} type="text" onKeyPress={this.detectEnterKey.bind(this, 1)} /></div>
