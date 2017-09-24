@@ -6,7 +6,7 @@ use self::crypto::sha2::Sha256;
 use self::rand::{thread_rng, Rng};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-pub fn gen_random_hash() -> String{
+pub fn gen_random_hash() -> String {
     let random_str: String = thread_rng().gen_ascii_chars().take(32).collect();
     digest(random_str.as_str())
 }

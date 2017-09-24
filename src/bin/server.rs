@@ -95,9 +95,9 @@ fn login_user(user: Json<Value>) -> Json<Value> {
             }))
         },
         Err(_) => {
-            return Json(json!({
+            Json(json!({
                 "result": false,
-            }));
+            }))
         }
     }
 }

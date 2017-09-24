@@ -30,7 +30,7 @@ fn authenticate(conn: &PgConnection, t_token: &str) -> Result<Auth, String> {
 
     if auth_token.len() > 0 {
         let auth_token = auth_token.first().unwrap();
-        let now = epoch_now();
+        let now = epoch_now() as i64;
 
         if now >= auth_token.expired_at {
             return Err(String::from("Token has been expired"));
