@@ -5,10 +5,12 @@ use self::rocket::Outcome;
 use self::rocket::http::Status;
 use self::rocket::request::{self, Request, FromRequest};
 use models::*;
+use helpers::*;
 use self::diesel::prelude::*;
 use establish_connection;
 use diesel::pg::PgConnection;
-use std::time::Instant;
+use std::time::{Instant, UNIX_EPOCH};
+use std::time::SystemTime;
 
 #[derive(Debug)]
 pub struct Auth {
@@ -28,12 +30,14 @@ fn authenticate(conn: &PgConnection, t_token: &str) -> Result<Auth, String> {
 
     if auth_token.len() > 0 {
         let auth_token = auth_token.first().unwrap();
-        let now = Instant::now().elapsed().as_secs() as i64;
+        let now = epoch_now();
 
         if now >= auth_token.expired_at {
             return Err(String::from("Token has been expired"));
         } else {
-            // TODO: increase expiry
+            let _: AuthToken = diesel::update(auth_tokens.find(t_token))
+                .set(expired_at.eq(now + 30 * 24 * 60 ^ 60))
+                .get_result(conn).expect("Error increasing token expiry");
         }
 
         let user_existence: i32 = users.filter(users::id.eq(auth_token.user_id))
@@ -71,7 +75,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
 
         match result {
             Ok(auth) => return Outcome::Success(auth),
-            Err(_msg) => return Outcome::Failure((Status::Unauthorized, ())) // log the message
+            Err(_msg) => return Outcome::Failure((Status::Unauthorized, ())) // TODO: log the message
         }
     }
 }
