@@ -34,5 +34,11 @@
 
 ** Ranking Algorithm
    *Notes:* TBD
+
 ** Admin Dashboard
    *Notes:* TBD
+
+* Community Feedback
+** TODO Enhancements
+  - [ ] Display site name instead of domain name
+
