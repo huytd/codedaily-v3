@@ -36,9 +36,7 @@ fn register_user(user: Json<User>) -> Json<Value> {
 
     let connection = establish_connection();
 
-    let next_id = (users.count().get_result(&connection).unwrap_or(0) + 1) as i32;
-    let new_user = User {
-        id: next_id,
+    let new_user = NewUser {
         username: user.username.to_string(),
         email: user.email.to_string(),
         password: encrypt_password(&user.password),

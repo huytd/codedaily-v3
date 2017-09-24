@@ -25,9 +25,7 @@ fn insert_link(conn: &PgConnection, post_url: &str, post_title: &str, post_time:
     use schema::links;
 
     let parsed_url = Url::parse(post_url).unwrap();
-    let next_id = (links.count().get_result(conn).unwrap_or(0) + 1) as i32;
-    let new_link = Link {
-        id: next_id,
+    let new_link = NewLink {
         title: post_title.to_string(),
         url: post_url.to_string(),
         time: post_time,
