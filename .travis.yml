@@ -1,6 +1,7 @@
 language: rust
 rust:
   - nightly
+cache: cargo
 services:
   - postgresql
 before_script:
