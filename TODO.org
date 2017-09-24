@@ -39,6 +39,7 @@
    *Notes:* TBD
 
 * Community Feedback
-** TODO Enhancements
+** TODO UI Enhancements
   - [ ] Display site name instead of domain name
-
+** Backend Enhancements
+  - [ ] Hide duplicated post across sites
