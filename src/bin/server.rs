@@ -76,7 +76,7 @@ fn login_user(user: Json<Value>) -> Json<Value> {
     match result {
         Ok(user) => {
             let rand_hash = gen_random_hash();
-            let expired_at = (epoch_now() as i64) + 30 * 24 * 60 * 60; // 30 days
+            let expired_at = (epoch_now() as i64) + AUTH_TOKEN_TTL;
             let new_auth_token = AuthToken {
                 token: rand_hash,
                 expired_at: expired_at,

@@ -36,7 +36,7 @@ fn authenticate(conn: &PgConnection, t_token: &str) -> Result<Auth, String> {
             return Err(String::from("Token has been expired"));
         } else {
             let _: AuthToken = diesel::update(auth_tokens.find(t_token))
-                .set(expired_at.eq(now + 30 * 24 * 60 ^ 60))
+                .set(expired_at.eq(now + AUTH_TOKEN_TTL))
                 .get_result(conn).expect("Error increasing token expiry");
         }
 
