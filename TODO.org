@@ -18,25 +18,27 @@
 ** TODO Authentication
   - [X] Implement User login system
   - [X] Implement User login UI
-  - [ ] Authentication token for API calls
-    *Assigned to:* @hqc
+  - [X] Authentication token for API calls
+        Assigned to: @hqc
+  - [X] Change UI to reflect new Authentication API
+        Assigned to: @huytd
 
 ** TODO Comment
   - [ ] Implement Comment API
-    *Assigned to:* @huytd
+        Assigned to: @huytd
   - [ ] Implement Comment UI
-    *Assigned to:* @huytd
+        Assigned to: @huytd
 
 ** TODO Voting System
   - [ ] Implement voting API
-    *Assigned to:* @hqc
+        Assigned to: @hqc
   - [ ] Implement voting UI
 
 ** Ranking Algorithm
-   *Notes:* TBD
+   Notes: TBD
 
 ** Admin Dashboard
-   *Notes:* TBD
+   Notes: TBD
 
 * Community Feedback
 ** TODO UI Enhancements

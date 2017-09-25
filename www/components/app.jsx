@@ -18,7 +18,6 @@ class App extends React.Component {
           total: json.total,
           currentPage: page || 1
         });
-        console.log(json);
       });
   }
 
@@ -59,10 +58,8 @@ class App extends React.Component {
       let store = window.localStorage;
       let last_login = store.getItem('kipalink_login_time');
       let user = store.getItem('kipalink_user');
-      console.log(new Date(last_login));
       if (last_login && user) {
         let distance = Math.floor((new Date(last_login) - new Date()) / 86400000);
-          console.log("DISTANCE", distance);
         if (distance <= 30) {
           this.setState({
             isLoggedIn: true,
@@ -118,21 +115,21 @@ class App extends React.Component {
   showLoggedInUser() {
     if (this.state.isLoggedIn) {
       return [
-        (<li><a><b>{this.state.loggedInUser}</b></a></li>),
-        (<li><a onClick={this.doLogout}>Logout</a></li>)
+        (<li key="user-name"><a><b>{this.state.loggedInUser}</b></a></li>),
+        (<li key="logout-button"><a onClick={this.doLogout}>Logout</a></li>)
       ];
     } else {
       return [
-        (<li><a onClick={this.displayLogin.bind(this)}>Login</a></li>),
-        (<li><a onClick={this.displayRegister.bind(this)}>Register</a></li>)
+        (<li key="login-button"><a onClick={this.displayLogin.bind(this)}>Login</a></li>),
+        (<li key="register-button"><a onClick={this.displayRegister.bind(this)}>Register</a></li>)
       ];
     }
   }
   
   render() {
-    let list = this.state.links.map(link => {
+    let list = this.state.links.map((link, idx) => {
       let date = new Date(link.time * 1000);
-      return <li key={link.time}>
+      return <li key={link.time + "-" + idx}>
         <a href={link.url} target="_blank" rel="nofollow">
           <div className="post-title">{this.decodeEntities(link.title)}</div>
           <div className="post-meta">Đăng ngày <span>{date.toLocaleDateString()}</span> tại <span>{link.source}</span></div>

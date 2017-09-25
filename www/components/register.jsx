@@ -36,21 +36,13 @@ class Register extends React.Component {
     })
       .then(response => response.json())
       .then(json => {
-        console.log(json);
         if (json.result != false) {
-          let user = json.result;
           this.setState({
-            message: `Hey ${user.username}! Welcome, dude!`
+            message: `Register! You're now able to login!`
           });
-          if (window.localStorage) {
-            let store = window.localStorage;
-            store.setItem('kipalink_user', user.username);
-            store.setItem('kipalink_email', user.email);
-            store.setItem('kipalink_login_time', new Date());
-            setTimeout(() => {
-              window.location.reload();
-            }, 500);
-          }
+          setTimeout(() => {
+            window.location.reload();
+          }, 700);
         } else {
           this.setState({
             message: 'Sorry, there is something wrong! Your username or email address is already being used.'
@@ -94,7 +86,7 @@ class Register extends React.Component {
   
   render() {
     return (
-      <div className="login-box">
+      <div key="register" className="login-box">
         <p><b>$ kipalog --version</b><br/> kipalink-0.1.0c build 2017.09.21b</p>
         <p><b>$ kipalog register</b><br/>
           <div>Hey! Welcome to Kipalog System. You're here for a new account, right?</div>
