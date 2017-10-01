@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 
+import utils from '../services/util';
+import AuthenticationService from '../services/authentication-service';
+
 let user_input = null;
 let password_input = null;
 
@@ -15,42 +18,20 @@ class Login extends React.Component {
   }
 
   doLogin() {
-    let that = this;
     let username = user_input.value;
     let password = password_input.value;
 
-    fetch(`/api/users/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username: username,
-        password: password
-      })
-    })
-      .then(response => response.json())
-      .then(json => {
-        console.log(json);
-        if (json.result && json.user && json.token) {
-          let user = json.user;
+    AuthenticationService
+      .doLogin(username, password)
+      .then((result) => {
+        if (result.success) {
           this.setState({
-            message: `Hey ${user.username}! Welcome back, dude!`
-          });
-          if (window.localStorage) {
-            let store = window.localStorage;
-            store.setItem('kipalink_user', user.username);
-            store.setItem('kipalink_email', user.email);
-            store.setItem('kipalink_login_time', new Date());
-            store.setItem('kipalink_token', json.token);
-            setTimeout(() => {
-              window.location.reload();
-            }, 500);
-          }
+            message: `Hey ${result.user.username}! Welcome back, dude!`
+          }, () => { utils.reloadAfter(500); });
         } else {
           this.setState({
             message: 'Sorry, wrong username and password!'
-          });
+          })
         }
       });
   }
@@ -77,7 +58,7 @@ class Login extends React.Component {
       }
     }
   }
-  
+
   render() {
     return (
       <div key="login" className="login-box">

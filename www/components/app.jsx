@@ -4,27 +4,19 @@ import 'whatwg-fetch';
 import Login from './login';
 import Register from './register';
 
-const LINKS_PER_PAGE = 30;
+import utils from '../services/util';
+import AuthenticationService from '../services/authentication-service';
+import LinkService from '../services/link-service';
 
+const LINKS_PER_PAGE = 30;
 class App extends React.Component {
   fetch_links(page) {
     let that = this;
-
-    fetch(`/api/feed/${page || 1}`)
-      .then(response => response.json())
-      .then(json => {
-        that.setState({
-          links: Array.from(json.links) || [],
-          total: json.total,
-          currentPage: page || 1
-        });
-      });
-  }
-
-  decodeEntities(encodedString) {
-    var textArea = document.createElement('textarea');
-    textArea.innerHTML = encodedString;
-    return textArea.value;
+    LinkService.getLinks(page)
+    .then(result => {
+      const {links, total, currentPage} = result;
+      that.setState({links, total, currentPage});
+    });
   }
 
   constructor(props) {
@@ -54,20 +46,8 @@ class App extends React.Component {
   }
 
   checkForLogin() {
-    if (window.localStorage) {
-      let store = window.localStorage;
-      let last_login = store.getItem('kipalink_login_time');
-      let user = store.getItem('kipalink_user');
-      if (last_login && user) {
-        let distance = Math.floor((new Date(last_login) - new Date()) / 86400000);
-        if (distance <= 30) {
-          this.setState({
-            isLoggedIn: true,
-            loggedInUser: user
-          });
-        }
-      }
-    }
+    const {isLoggedIn, loggedInUser} = AuthenticationService.checkForLogin();
+    this.setState({isLoggedIn, loggedInUser});
   }
 
   showLoginComponent() {
@@ -101,15 +81,8 @@ class App extends React.Component {
   }
 
   doLogout() {
-    if (window.localStorage) {
-      let store = window.localStorage;
-      store.removeItem('kipalink_user');
-      store.removeItem('kipalink_email');
-      store.removeItem('kipalink_login_time');
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
-    }
+    AuthenticationService.doLogout();
+    utils.reloadAfter(100);
   }
 
   showLoggedInUser() {
@@ -125,13 +98,13 @@ class App extends React.Component {
       ];
     }
   }
-  
+
   render() {
     let list = this.state.links.map((link, idx) => {
       let date = new Date(link.time * 1000);
       return <li key={link.time + "-" + idx}>
         <a href={link.url} target="_blank" rel="nofollow">
-          <div className="post-title">{this.decodeEntities(link.title)}</div>
+          <div className="post-title">{utils.decodeEntities(link.title)}</div>
           <div className="post-meta">Đăng ngày <span>{date.toLocaleDateString()}</span> tại <span>{link.source}</span></div>
         </a>
       </li>

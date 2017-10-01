@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import 'whatwg-fetch';
+
+import utils from '../services/util';
+import AuthenticationService from '../services/authentication-service';
 
 let email_input = null;
 let user_input = null;
@@ -21,34 +23,19 @@ class Register extends React.Component {
     let username = user_input.value;
     let password = password_input.value;
 
-    fetch(`/api/users/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        id: 1,
-        username: username,
-        email: email,
-        password: password,
-        enable: 1
-      })
-    })
-      .then(response => response.json())
-      .then(json => {
-        if (json.result != false) {
+    AuthenticationService.doRegister(username, email, password)
+    .then((result) => {
+      if (result.result != false) {
           this.setState({
             message: `Register! You're now able to login!`
           });
-          setTimeout(() => {
-            window.location.reload();
-          }, 700);
+          utils.reloadAfter(700);
         } else {
           this.setState({
             message: 'Sorry, there is something wrong! Your username or email address is already being used.'
           });
         }
-      });
+    });
   }
 
   componentDidMount() {
@@ -83,7 +70,7 @@ class Register extends React.Component {
       }
     }
   }
-  
+
   render() {
     return (
       <div key="register" className="login-box">
