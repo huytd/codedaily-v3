@@ -95,28 +95,7 @@ pub const AUTH_TOKEN_TTL: i64 = 30 * 24 * 60 * 60; // 30 days
 #[cfg(test)]
 mod tests {
     use super::*;
-    use establish_connection;
-    use schema::users;
-
-    fn conn_with_a_user() -> PgConnection {
-        let connection = establish_connection();
-        connection.begin_test_transaction().unwrap();
-
-        let user = User {
-            id: 42,
-            username: "username".to_string(),
-            email: "email@test.com".to_string(),
-            password: "passwd".to_string(),
-            enable: 1,
-        };
-
-        let _ : User = diesel::insert(&user)
-                              .into(users::table)
-                              .get_result(&connection)
-                              .unwrap();
-
-        connection
-    }
+    use test_helpers::*;
 
     #[test]
     fn find_ok() {
