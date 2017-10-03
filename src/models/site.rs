@@ -1,4 +1,3 @@
-
 #[derive(Queryable)]
 pub struct Site {
     pub id: i32,
