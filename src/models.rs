@@ -6,7 +6,6 @@ use super::schema::users;
 use super::schema::auth_tokens;
 use diesel::pg::PgConnection;
 use self::diesel::prelude::*;
-use self::diesel::associations::HasTable;
 
 #[derive(Queryable)]
 pub struct Site {
@@ -36,7 +35,8 @@ pub struct NewLink {
     pub source: Option<String>,
 }
 
-#[derive(Queryable, Serialize, Deserialize, Debug, Clone)]
+#[table_name="users"]
+#[derive(Queryable, Insertable, Serialize, Deserialize, Debug, Clone)]
 pub struct User {
     pub id: i32,
     pub username: String,
@@ -56,7 +56,6 @@ pub struct NewUser {
 
 impl User {
     pub fn find(conn: &PgConnection, id: i32) -> Result<User, ()> {
-        use schema::users;
         use super::schema::users::dsl;
 
         let found_users = dsl::users.filter(dsl::id.eq(id))
@@ -70,7 +69,6 @@ impl User {
     }
 
     pub fn find_by_login(conn: &PgConnection, t_username: &str, t_password: &str) -> Result<User, ()> {
-        use schema::users;
         use super::schema::users::dsl::*;
 
         let found_users = users.filter(username.eq(t_username).and(password.eq(t_password)))
@@ -93,3 +91,47 @@ pub struct AuthToken {
 }
 
 pub const AUTH_TOKEN_TTL: i64 = 30 * 24 * 60 * 60; // 30 days
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use test_helpers::*;
+
+    #[test]
+    fn find_ok() {
+        let conn = conn_with_a_user();
+
+        let result = User::find(&conn, 42);
+        assert!(result.is_ok());
+
+        let user = result.unwrap();
+        assert!(42 == user.id);
+    }
+
+    #[test]
+    fn find_err() {
+        let conn = conn_with_a_user();
+
+        let result = User::find(&conn, 43);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn find_by_login_ok() {
+        let conn = conn_with_a_user();
+
+        let result = User::find_by_login(&conn, "username", "passwd");
+        assert!(result.is_ok());
+
+        let user = result.unwrap();
+        assert!("username" == user.username);
+    }
+
+    #[test]
+    fn find_by_login_err() {
+        let conn = conn_with_a_user();
+
+        let result = User::find_by_login(&conn, "non_existing", "passwd");
+        assert!(result.is_err());
+    }
+}
