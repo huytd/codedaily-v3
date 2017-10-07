@@ -1,6 +1,6 @@
 use super::super::schema::users;
 use diesel::pg::PgConnection;
-use self::diesel::prelude::*;
+use diesel::prelude::*;
 
 #[table_name="users"]
 #[derive(Queryable, Insertable, Serialize, Deserialize, Debug, Clone)]
