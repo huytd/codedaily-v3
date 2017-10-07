@@ -4,7 +4,6 @@
 extern crate rocket;
 extern crate serde_json;
 #[macro_use] extern crate rocket_contrib;
-#[macro_use] extern crate serde_derive;
 extern crate crypto;
 extern crate codedaily_backend;
 extern crate diesel;
@@ -15,16 +14,18 @@ use self::codedaily_backend::middleware::Auth;
 use self::codedaily_backend::helpers::*;
 use codedaily_backend::schema::links::dsl::*;
 use codedaily_backend::schema::users::dsl::*;
+use codedaily_backend::schema::comments::dsl::*;
 use self::diesel::prelude::*;
-use self::diesel::associations::HasTable;
 use rocket_contrib::{Json, Value};
 use std::io;
+use std::cmp::max;
 use std::path::{Path, PathBuf};
 use rocket::response::NamedFile;
 use crypto::digest::Digest;
 use crypto::sha2::Sha256;
 
 const LINKS_PER_PAGE: i64 = 30;
+const COMMENTS_PER_PAGE: u32 = 30;
 
 fn encrypt_password(input: &str) -> String {
     let mut hasher = Sha256::new();
@@ -138,6 +139,47 @@ fn feed(page: i64) -> Json<Value> {
     }))
 }
 
+#[get("/link/<link>/comments")]
+fn get_comments(link: i32) -> Json<Value> {
+    get_comments_page(link, 1)
+}
+
+#[get("/link/<link>/comments/<page>")]
+fn get_comments_page(link: i32, page: u32) -> Json<Value> {
+    let connection = establish_connection();
+    let offset = max(page - 1, 0) * COMMENTS_PER_PAGE;
+
+    let comments_query = comments.filter(link_id.eq(link));
+    let results = comments_query.offset(offset as i64).limit(LINKS_PER_PAGE).load::<Comment>(&connection).ok();
+    let total = comments_query.load::<Comment>(&connection).ok();
+
+    Json(json!({
+        "status": "success",
+        "comments": results,
+        "total": total.unwrap().len()
+    }))
+}
+
+#[post("/link/<link>/comment", format = "application/json", data = "<comment>")]
+fn post_comment(auth: Auth, link: i32, comment: Json<PostComment>) -> Json<Value> {
+    use schema::comments;
+
+    let connection = establish_connection();
+
+    let new_comment = NewComment {
+        message: comment.message.to_string(),
+        link_id: link,
+        author_id: auth.user_id,
+    };
+
+    let result: Comment = diesel::insert(&new_comment).into(comments::table).get_result(&connection)
+        .expect("Error persisting comment");
+
+    Json(json!({
+        "id": result.id
+    }))
+}
+
 #[get("/")]
 fn index() -> io::Result<NamedFile> {
     NamedFile::open("www/index.html")
@@ -150,7 +192,7 @@ fn files(file: PathBuf) -> Option<NamedFile> {
 
 fn main() {
     rocket::ignite()
-        .mount("/api/", routes![feed, register_user, login_user, get_user])
+        .mount("/api/", routes![feed, register_user, login_user, get_user, get_comments, get_comments_page, post_comment])
         .mount("/", routes![index, files])
         .launch();
 }
