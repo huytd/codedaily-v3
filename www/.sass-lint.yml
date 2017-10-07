@@ -1,0 +1,5 @@
+rules:
+  single-line-per-selector: 0
+  property-sort-order: 0
+  nesting-depth: 0
+  no-important: 0

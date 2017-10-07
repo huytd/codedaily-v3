@@ -6,10 +6,11 @@ class LinkService {
         return {
           links: Array.from(json.links) || [],
           total: json.total,
-          currentPage: page
+          currentPage: page,
         };
       });
   }
 }
+
 
 module.exports = new LinkService();

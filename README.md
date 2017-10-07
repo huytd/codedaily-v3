@@ -45,7 +45,7 @@ cargo install
 
 ## Setup frontend
 
-Use yarn
+Use yarn in the `www` directory
 
 Run command: `yarn install && yarn watch`
 
@@ -61,4 +61,3 @@ This job will run pass every hour at minute 0.
 # LICENSE
 
 MIT & APACHE-2
-
