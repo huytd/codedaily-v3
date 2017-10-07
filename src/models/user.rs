@@ -1,8 +1,9 @@
 use super::super::schema::users;
 use diesel::pg::PgConnection;
-use diesel::prelude::*;
+use self::diesel::prelude::*;
 
-#[derive(Queryable, Serialize, Deserialize, Debug, Clone)]
+#[table_name="users"]
+#[derive(Queryable, Insertable, Serialize, Deserialize, Debug, Clone)]
 pub struct User {
     pub id: i32,
     pub username: String,
@@ -45,5 +46,49 @@ impl User {
         } else {
             return Err(());
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use test_helpers::*;
+
+    #[test]
+    fn find_ok() {
+        let conn = conn_with_a_user();
+
+        let result = User::find(&conn, 42);
+        assert!(result.is_ok());
+
+        let user = result.unwrap();
+        assert!(42 == user.id);
+    }
+
+    #[test]
+    fn find_err() {
+        let conn = conn_with_a_user();
+
+        let result = User::find(&conn, 43);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn find_by_login_ok() {
+        let conn = conn_with_a_user();
+
+        let result = User::find_by_login(&conn, "username", "passwd");
+        assert!(result.is_ok());
+
+        let user = result.unwrap();
+        assert!("username" == user.username);
+    }
+
+    #[test]
+    fn find_by_login_err() {
+        let conn = conn_with_a_user();
+
+        let result = User::find_by_login(&conn, "non_existing", "passwd");
+        assert!(result.is_err());
     }
 }
