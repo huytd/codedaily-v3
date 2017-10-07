@@ -1,39 +1,6 @@
-extern crate serde_json;
-extern crate diesel;
-
-use super::schema::links;
-use super::schema::users;
-use super::schema::auth_tokens;
+use super::super::schema::users;
 use diesel::pg::PgConnection;
-use self::diesel::prelude::*;
-
-#[derive(Queryable)]
-pub struct Site {
-    pub id: i32,
-    pub name: String,
-    pub url: String,
-    pub last_check: i32,
-}
-
-#[derive(Queryable, Serialize, Debug, Clone)]
-pub struct Link {
-    pub id: i32,
-    pub title: String,
-    pub url: String,
-    pub body: Option<String>,
-    pub time: i32,
-    pub source: Option<String>,
-}
-
-#[table_name="links"]
-#[derive(Serialize, Insertable, Debug, Clone)]
-pub struct NewLink {
-    pub title: String,
-    pub url: String,
-    pub body: Option<String>,
-    pub time: i32,
-    pub source: Option<String>,
-}
+use diesel::prelude::*;
 
 #[table_name="users"]
 #[derive(Queryable, Insertable, Serialize, Deserialize, Debug, Clone)]
@@ -56,7 +23,7 @@ pub struct NewUser {
 
 impl User {
     pub fn find(conn: &PgConnection, id: i32) -> Result<User, ()> {
-        use super::schema::users::dsl;
+        use super::super::schema::users::dsl;
 
         let found_users = dsl::users.filter(dsl::id.eq(id))
             .load::<User>(conn).ok().unwrap();
@@ -69,7 +36,7 @@ impl User {
     }
 
     pub fn find_by_login(conn: &PgConnection, t_username: &str, t_password: &str) -> Result<User, ()> {
-        use super::schema::users::dsl::*;
+        use super::super::schema::users::dsl::*;
 
         let found_users = users.filter(username.eq(t_username).and(password.eq(t_password)))
             .load::<User>(conn).ok().unwrap();
@@ -81,16 +48,6 @@ impl User {
         }
     }
 }
-
-#[table_name="auth_tokens"]
-#[derive(Queryable, Serialize, Insertable, Deserialize, Debug, Clone)]
-pub struct AuthToken {
-    pub token: String,
-    pub user_id: i32,
-    pub expired_at: i64,
-}
-
-pub const AUTH_TOKEN_TTL: i64 = 30 * 24 * 60 * 60; // 30 days
 
 #[cfg(test)]
 mod tests {
