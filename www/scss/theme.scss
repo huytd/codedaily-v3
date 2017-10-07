@@ -1,20 +1,27 @@
-@import url('https://fonts.googleapis.com/css?family=Inconsolata');
-
 $view-width: 60vw;
+
+$font-family: 'Inconsolata', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+
+@import 'colors';
+
 
 html {
   box-sizing: border-box;
 
-  *, *:before, *:after {
+  *, *::before, *::after {
     box-sizing: inherit;
   }
 }
 
+
 html, body {
-  width: 100%; height: 100%;
-  padding: 0; margin: 0;
-  background: #FDFDFD;
-  font-family: "Inconsolata", -apple-system, BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+
+  background: $background-color;
+  font-family: $font-family;
   font-size: 16px;
 
   h1, h2, h3, h4, h5, h6 {
@@ -22,8 +29,10 @@ html, body {
   }
 }
 
+
 .container {
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   padding: 0;
   margin: 0 auto;
 
@@ -32,23 +41,21 @@ html, body {
     margin: 0 auto;
     font-size: 20px;
     font-weight: 600;
-    color: #333;
+    color: $header-font-color;
     padding: 20px;
     cursor: default;
     line-height: 32px;
     position: relative;
     user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -o-user-select: none;
 
     span {
-      background: #689F38;
-      color: #FFF;
-      width: 32px; height: 32px;
+      background-color: $logo-background-color;
+      color: $logo-color;
+      width: 32px;
+      height: 32px;
       display: inline-block;
-      text-align: center; line-height: 32px;
+      text-align: center;
+      line-height: 32px;
       border-radius: 3px;
     }
 
@@ -56,18 +63,20 @@ html, body {
       width: auto;
       height: 32px;
       position: absolute;
-      top: 20px; right: 20px;
+      top: 20px;
+      right: 20px;
       font-size: 16px;
       line-height: 32px;
       text-align: right;
 
       .filter-list {
         list-style: none;
-        margin: 0; padding: 0;
+        margin: 0;
+        padding: 0;
         text-align: right;
 
-        &:after {
-          content: ".";
+        &::after {
+          content: '.';
           display: block;
           visibility: hidden;
           clear: both;
@@ -75,31 +84,32 @@ html, body {
 
         li {
           display: inline-block;
-          &:before {
-            content: "|";
+
+          &::before {
+            content: '|';
             padding: 0 10px;
           }
 
           &:first-child {
-            &:before {
-              content: "";
+            &::before {
+              content: '';
             }
           }
 
           a {
-            color: #333;
+            color: $header-font-color;
             text-decoration: none;
             padding: 5px 8px;
             border-radius: 3px;
             font-weight: normal;
 
             &:hover {
-              color: #CCC;
+              color: $header-link-hover-color;
             }
 
             &.active {
-              background: #F0F0F0;
-              color: #333;
+              background: $header-link-active-background-color;
+              color: $header-font-color;
               font-weight: bold;
             }
           }
@@ -107,9 +117,9 @@ html, body {
       }
     }
   }
-  
+
   .content {
-    border-top: 1px solid #F6F6F6;
+    border-top: 1px solid $content-border-color;
 
     .main {
       padding: 20px;
@@ -117,11 +127,13 @@ html, body {
       margin: 0 auto;
     }
 
+
     .link-list {
       list-style: none;
       counter-reset: codedaily-news-list;
-      margin: 0; padding: 0;
-      
+      margin: 0;
+      padding: 0;
+
       li {
         margin-bottom: 24px;
         padding: 0;
@@ -131,46 +143,49 @@ html, body {
           text-decoration: none;
           position: relative;
           padding-left: 35px;
-          color: #555;
+          color: $content-link-color;
 
-          &:before {
+          &::before {
             content: counter(codedaily-news-list);
             counter-increment: codedaily-news-list;
-            width: 24px; height: 24px;
+            width: 24px;
+            height: 24px;
             display: block;
             position: absolute;
-            top: 0; left: 0;
+            top: 0;
+            left: 0;
             border-radius: 3px;
-            background: #FF8F00;
+
+            background: $content-link-before-background-color;
             text-align: center;
             line-height: 24px;
-            color: #FFF;
-            font-size: 0.8em;
+            color: $content-link-before-color;
+            font-size: .8em;
             font-weight: bold;
             margin-right: 10px;
           }
 
           .post-title {
-            color: #333;
+            color: $header-font-color;
             font-weight: 600;
           }
 
           &:hover {
             .post-title {
-              color: #555;
+              color: $content-link-title-color;
             }
           }
 
           &:visited {
-            opacity: 0.6;
+            opacity: .6;
           }
 
           .post-meta {
             margin: 5px 0;
-            font-size: 0.8em;
+            font-size: .8em;
 
             span {
-              color: #FF8F00;
+              color: $content-post-meta-color;
               font-weight: bold;
             }
           }
@@ -179,25 +194,27 @@ html, body {
     }
 
     .pagination {
-      margin: 0; padding: 5px;
+      margin: 0;
+      padding: 5px;
       list-style: none;
       text-align: center;
-      
+
       li {
         display: inline-block;
         cursor: pointer;
-        width: 24px; height: 24px;
+        width: 24px;
+        height: 24px;
         line-height: 24px;
         text-align: center;
         border-radius: 5px;
 
         &:hover {
-          color: #689F38;
+          color: $pagination-hover-color;
         }
 
         &.active {
-          background: #689F38;
-          color: #FFF;
+          background: $pagination-active-background-color;
+          color: $pagination-active-color;
         }
       }
     }
@@ -214,6 +231,7 @@ html, body {
       width: 100vw !important;
     }
   }
+
   .content {
     .main {
       width: 100vw !important;
@@ -221,36 +239,24 @@ html, body {
   }
 }
 
-::-webkit-scrollbar-track
-{
-	background-color: #eeeeee;
-}
-
-::-webkit-scrollbar
-{
-	width: 8px;
-	background-color: #cccccc;
-}
-
-::-webkit-scrollbar-thumb
-{
-	background-color: #cccccc;
-  border: none;
-}
 
 .login-box {
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   padding: 20px;
   position: fixed;
-  top: 0; left: 0;
-  background: #fff;
+  top: 0;
+  left: 0;
+  background: $login-background-color;
   z-index: 999;
 
-  input[type=email], input[type=text], input[type=password] {
-    border: none;
-    outline: none;
-    font-family: "Inconsolata", -apple-system, BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-    font-size: 16px;
+  input {
+    &[type='email'], &[type='text'], &[type='password'] {
+      border: 0;
+      outline: none;
+      font-family: $font-family;
+      font-size: 16px;
+    }
   }
 
   .step-show {
@@ -271,13 +277,13 @@ html, body {
 
     .toggle-icon {
       position: relative;
-      border: 1px solid rgba(0,0,0,.15);
-      background-color: white;
+      border: 1px solid $transparent-015;
+      background-color: $mobile-icon-background-color;
       border-radius: 2px;
       width: 2.5em;
       height: 2.5em;
       display: inline-block;
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+      background-image: url('/icon.svg');
     }
 
     .filter-list {
@@ -286,25 +292,29 @@ html, body {
       width: 100%;
       margin: 15px 0 !important;
       z-index: 1000;
-      background: #fff;
-        li {
-          &:before {
-            content: "" !important;
-          }
-          margin-top: 8px;
-          margin-left: 8px;
-          display: flex !important;
-          flex-direction: row;
-          justify-content: flex-start;
-          a {
-            &:before {
-              content: "";
-            }
-            width: 100%;
-            text-align: left;
-            padding: 0 17px !important;
+      background: $mobile-filter-list-background-color;
+
+      li {
+        margin-top: 8px;
+        margin-left: 8px;
+        display: flex !important;
+        flex-direction: row;
+        justify-content: flex-start;
+
+        &::before {
+          content: '' !important;
+        }
+
+        a {
+          width: 100%;
+          text-align: left;
+          padding: 0 17px !important;
+
+          &::before {
+            content: '';
           }
         }
+      }
     }
 
     .show {
