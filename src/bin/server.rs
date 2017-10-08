@@ -139,17 +139,17 @@ fn feed(page: i64) -> Json<Value> {
     }))
 }
 
-#[get("/link/<link>/comments")]
-fn get_comments(link: i32) -> Json<Value> {
-    get_comments_page(link, 1)
+#[get("/link/<link_id>/comments")]
+fn get_comments(link_id: i32) -> Json<Value> {
+    get_comments_page(link_id, 1)
 }
 
-#[get("/link/<link>/comments/<page>")]
-fn get_comments_page(link: i32, page: u32) -> Json<Value> {
+#[get("/link/<link_id>/comments/<page>")]
+fn get_comments_page(link_id: i32, page: u32) -> Json<Value> {
     let connection = establish_connection();
     let offset = max(page - 1, 0) * COMMENTS_PER_PAGE;
 
-    let comments_query = comments.filter(link_id.eq(link));
+    let comments_query = comments.filter(link_id.eq(link_id));
     let results = comments_query.offset(offset as i64).limit(LINKS_PER_PAGE).load::<Comment>(&connection).ok();
     let total = comments_query.load::<Comment>(&connection).ok();
 
@@ -160,15 +160,15 @@ fn get_comments_page(link: i32, page: u32) -> Json<Value> {
     }))
 }
 
-#[post("/link/<link>/comment", format = "application/json", data = "<comment>")]
-fn post_comment(auth: Auth, link: i32, comment: Json<PostComment>) -> Json<Value> {
+#[post("/link/<link_id>/comment", format = "application/json", data = "<comment>")]
+fn post_comment(auth: Auth, link_id: i32, comment: Json<PostComment>) -> Json<Value> {
     use schema::comments;
 
     let connection = establish_connection();
 
     let new_comment = NewComment {
         message: comment.message.to_string(),
-        link_id: link,
+        link_id: link_id,
         author_id: auth.user_id,
     };
 
