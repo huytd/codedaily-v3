@@ -69,12 +69,14 @@ class App extends React.Component {
   }
 
   displayRegister() {
+    this.toggleMenu();
     this.setState({
       showRegister: true
     });
   }
 
   displayLogin() {
+    this.toggleMenu();
     this.setState({
       showLogin: true
     });
@@ -83,12 +85,13 @@ class App extends React.Component {
   doLogout() {
     AuthenticationService.doLogout();
     utils.reloadAfter(100);
+    this.toggleMenu();
   }
 
   showLoggedInUser() {
     if (this.state.isLoggedIn) {
       return [
-        (<li key="user-name"><a><b>{this.state.loggedInUser}</b></a></li>),
+        (<li key="user-name"><a onClick={this.toggleMenu.bind(this)}><b>{this.state.loggedInUser}</b></a></li>),
         (<li key="logout-button"><a onClick={this.doLogout}>Logout</a></li>)
       ];
     } else {
@@ -127,8 +130,8 @@ class App extends React.Component {
           <div className="user-control">
             <button className="toggle-icon" onClick={this.toggleMenu.bind(this)}></button>
             <ul className={"filter-list" + (this.state.menuActive ? " show": " hide")}>
-              <li><a href="#">Top</a></li>
-              <li><a className="active" href="#">Latest</a></li>
+              <li><a href="#" onClick={this.toggleMenu.bind(this)}>Top</a></li>
+              <li><a className="active" href="#" onClick={this.toggleMenu.bind(this)}>Latest</a></li>
               { this.showLoggedInUser() }
             </ul>
           </div>
