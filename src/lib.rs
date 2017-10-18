@@ -14,6 +14,7 @@ pub mod schema;
 pub mod models;
 pub mod middleware;
 pub mod helpers;
+#[cfg(test)] mod test_helpers;
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
