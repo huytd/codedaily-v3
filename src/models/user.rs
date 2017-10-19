@@ -25,26 +25,26 @@ impl User {
     pub fn find(conn: &PgConnection, id: i32) -> Result<User, ()> {
         use super::super::schema::users::dsl;
 
-        let found_users = dsl::users.filter(dsl::id.eq(id))
-            .load::<User>(conn).ok().unwrap();
+        let found_user = dsl::users.filter(dsl::id.eq(id))
+            .load::<User>(conn).ok().unwrap().pop();
 
-        if found_users.len() > 0 {
-            return Ok(found_users.first().unwrap().clone());
+        if found_user.is_some() {
+            Ok(found_user.unwrap())
         } else {
-            return Err(());
+            Err(())
         }
     }
 
     pub fn find_by_login(conn: &PgConnection, t_username: &str, t_password: &str) -> Result<User, ()> {
         use super::super::schema::users::dsl::*;
 
-        let found_users = users.filter(username.eq(t_username).and(password.eq(t_password)))
-            .load::<User>(conn).ok().unwrap();
+        let found_user = users.filter(username.eq(t_username).and(password.eq(t_password)))
+            .load::<User>(conn).ok().unwrap().pop();
 
-        if found_users.len() > 0 {
-            return Ok(found_users.first().unwrap().clone());
+        if found_user.is_some() {
+            Ok(found_user.unwrap())
         } else {
-            return Err(());
+            Err(())
         }
     }
 }
