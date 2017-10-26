@@ -27,4 +27,5 @@ copy:
 dist: build copy
 
 db:
+	source .env
 	psql -d DB_URL
