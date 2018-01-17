@@ -1,18 +1,15 @@
 extern crate codedaily_backend;
 extern crate diesel;
-extern crate rss;
-extern crate chrono;
 extern crate url;
 extern crate r2d2;
 extern crate r2d2_diesel;
 extern crate dotenv;
+extern crate feed_parser;
 
 use self::codedaily_backend::*;
 use self::codedaily_backend::models::*;
 use self::diesel::prelude::*;
 use diesel::pg::PgConnection;
-use rss::Channel;
-use chrono::prelude::*;
 use codedaily_backend::schema::sites::dsl::*;
 use codedaily_backend::schema::links::dsl::*;
 use url::{Url};
@@ -20,6 +17,7 @@ use std::thread;
 use r2d2_diesel::ConnectionManager;
 use dotenv::dotenv;
 use std::env;
+use feed_parser::parser;
 
 fn insert_link(conn: &PgConnection, post_url: &str, post_title: &str, post_time: i32) -> Link {
     use schema::links;
@@ -38,31 +36,27 @@ fn insert_link(conn: &PgConnection, post_url: &str, post_title: &str, post_time:
 }
 
 fn crawl_site(connection: &PgConnection, site: &Site) -> i32 {
-    let channel = Channel::from_url(&site.url).ok();
-    match channel {
-        Some(channel) => {
+    let feed = parser::from_url(&site.url);
+    match feed {
+        Some(feed) => {
             let mut latestcheck = site.last_check;
-            for item in channel.items() {
-                let post_title = item.title().unwrap_or("");
-                let post_url = item.link().unwrap_or("");
-                let pub_date = item.pub_date().unwrap_or("");
-                let parse_post_time = DateTime::parse_from_rfc2822(pub_date);
-                if parse_post_time.ok().is_some() {
-                    let post_time = parse_post_time.unwrap().timestamp() as i32;
-                    if post_time > latestcheck {
-                        latestcheck = post_time;
-                    }
-                    if post_time > site.last_check {
-                        println!("{} : {} : {}", post_title, post_url, post_time);
-                        insert_link(&connection, post_url, post_title, post_time);
-                    }
+            for entry in feed.entries {
+                let post_title = &entry.title.unwrap_or("".to_string());
+                let post_url = &entry.id;
+                let pub_date = entry.published;
+                let post_time = pub_date.timestamp() as i32;
+                println!("Checking {} {}", post_time, latestcheck);
+                if post_time > latestcheck {
+                    latestcheck = post_time;
+                }
+                if post_time > site.last_check {
+                    println!("{} : {} : {}", post_title, post_url, post_time);
+                    insert_link(&connection, post_url, post_title, post_time);
                 }
             }
             latestcheck
         },
-        None => {
-            -1
-        }
+        None => -1
     }
 }
 

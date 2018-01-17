@@ -1,0 +1,3 @@
+[submodule "feed-parser"]
+	path = feed-parser
+	url = https://github.com/huytd/feed-parser
