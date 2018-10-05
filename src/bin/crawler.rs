@@ -45,7 +45,6 @@ fn crawl_site(connection: &PgConnection, site: &Site) -> i32 {
                 let post_url = &entry.id;
                 let pub_date = entry.published;
                 let post_time = pub_date.timestamp() as i32;
-                println!("Checking {} {}", post_time, latestcheck);
                 if post_time > latestcheck {
                     latestcheck = post_time;
                 }

@@ -16,6 +16,7 @@ class App extends React.Component {
     .then(result => {
       const {links, total, currentPage} = result;
       that.setState({links, total, currentPage});
+      window.scrollTo(0, 0);
     });
   }
 
@@ -123,8 +124,6 @@ class App extends React.Component {
 
     return (
       <div className="container">
-        { this.showLoginComponent() }
-        { this.showRegisterComponent() }
         <div className="header">
           <span>k</span> kipalog links
           <div className="user-control">
