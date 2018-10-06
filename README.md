@@ -22,6 +22,12 @@ Use Postgres
 
 Copy file `.env.example` to `.env` and add your config db url.
 
+### Pull all git submodules
+
+```
+git submodule update --init --recursive
+```
+
 ### Install
 
 ```
