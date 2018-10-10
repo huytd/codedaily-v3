@@ -103,23 +103,27 @@ class App extends React.Component {
     }
   }
 
+  filterText(input){
+      return input.replace(/^\"/, '').replace(/\"$/, '').replace(/\\\"/g, '"')
+          .replace(/(&#8220|&#8221|&#8230)/g, "").replace(/;/g, "")
+          .replace(/<\/?(p|ul|li|b|i|span|div|tr|td|table|em|strong|hr|h1|h2|h3|h4|h5|h6)>/g, '')
+          .replace(/<a.*>/g, '').replace(/<\/a>/g, '');
+  }
+
   render() {
+    let maxWords = 60;
     let list = this.state.links.map((link, idx) => {
-      let desc = link.body.replace(/^\"/, '').replace(/\"$/, '').replace(/\\\"/g, '"')
-                .replace(/&#8220/g, "").replace(/&#8230/g, "…").replace(/&#8221/g, "")
-                .replace(/;/g, "");
-      let splitPos = desc.indexOf("…");
-      if (splitPos !== -1) {
-          desc = desc.substr(0, splitPos) + "...";
-      }
-      let date = new Date(link.time * 1000);
-      return <li key={link.time + "-" + idx}>
-        <a href={link.url} target="_blank" rel="nofollow">
-          <div className="post-title">{utils.decodeEntities(link.title)}</div>
-        </a>
-        <div className="post-desc">{desc}</div>
-        <div className="post-meta">Đăng ngày <span>{date.toLocaleDateString()}</span> tại <span>{link.source}</span></div>
-      </li>
+        let desc = this.filterText(link.body);
+            desc = desc.split(' ').slice(0, maxWords).join(" ").trim();
+        desc += (desc.length > 0 && desc[desc.length-1] !== '.') ? '...' : '';
+        let date = new Date(link.time * 1000);
+        return <li key={link.time + "-" + idx}>
+            <a href={link.url} target="_blank" rel="nofollow">
+            <div className="post-title">{utils.decodeEntities(link.title)}</div>
+            </a>
+            <div className="post-desc">{desc}</div>
+            <div className="post-meta">Đăng ngày <span>{date.toLocaleDateString()}</span> tại <span>{link.source}</span></div>
+        </li>
     });
 
     let totalPage = parseInt(this.state.total / LINKS_PER_PAGE);
