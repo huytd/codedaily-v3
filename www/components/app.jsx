@@ -105,12 +105,20 @@ class App extends React.Component {
 
   render() {
     let list = this.state.links.map((link, idx) => {
+      let desc = link.body.replace(/^\"/, '').replace(/\"$/, '').replace(/\\\"/g, '"')
+                .replace(/&#8220/g, "").replace(/&#8230/g, "…").replace(/&#8221/g, "")
+                .replace(/;/g, "");
+      let splitPos = desc.indexOf("…");
+      if (splitPos !== -1) {
+          desc = desc.substr(0, splitPos) + "...";
+      }
       let date = new Date(link.time * 1000);
       return <li key={link.time + "-" + idx}>
         <a href={link.url} target="_blank" rel="nofollow">
           <div className="post-title">{utils.decodeEntities(link.title)}</div>
-          <div className="post-meta">Đăng ngày <span>{date.toLocaleDateString()}</span> tại <span>{link.source}</span></div>
         </a>
+        <div className="post-desc">{desc}</div>
+        <div className="post-meta">Đăng ngày <span>{date.toLocaleDateString()}</span> tại <span>{link.source}</span></div>
       </li>
     });
 
