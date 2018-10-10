@@ -2,7 +2,7 @@ import 'whatwg-fetch';
 
 class AuthenticationService {
   static doLogin(username, password) {
-    return fetch(`/api/users/login`, {
+    return fetch('/api/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -21,7 +21,7 @@ class AuthenticationService {
   }
 
   static doRegister(username, email, password) {
-      return fetch(`/api/users/register`, {
+      return fetch('/api/users/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -6,13 +6,11 @@
   "scripts": {
     "start": "webpack-dev-server",
     "watch": "webpack --watch",
-    "build": "webpack -p"
+    "build": "webpack -p",
+    "test": "jest --verbose --watch"
   },
   "dependencies": {
-    "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.4",
     "node-sass": "^4.5.3",
     "react": "^15.5.4",
@@ -20,7 +18,17 @@
     "sass-loader": "^6.0.5",
     "style-loader": "^0.18.1",
     "webpack": "^2.6.1",
-    "webpack-dev-server": "^2.4.5",
+    "webpack-dev-server": "^2.4.5"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-jest": "^21.2.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "enzyme": "^3.1.0",
+    "fetch-mock": "^5.13.1",
+    "jest": "^21.2.1",
+    "react-addons-test-utils": "^15.6.2",
     "whatwg-fetch": "^2.0.3"
   }
 }
