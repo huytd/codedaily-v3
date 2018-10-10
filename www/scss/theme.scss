@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata');
 
-$view-width: 40vw;
+$view-width: 700px;
 
 html {
   box-sizing: border-box;
@@ -28,7 +28,7 @@ html, body {
   margin: 0 auto;
 
   .header {
-    width: $view-width;
+    max-width: $view-width;
     margin: 0 auto;
     font-size: 20px;
     font-weight: 600;
@@ -113,7 +113,7 @@ html, body {
 
     .main {
       padding: 20px;
-      width: $view-width;
+      max-width: $view-width;
       margin: 0 auto;
     }
 
@@ -124,7 +124,8 @@ html, body {
       
       li {
         margin-bottom: 24px;
-        padding: 0;
+        padding: 0 0 20px 0;
+        border-bottom: 1px solid #EEE;
 
         a {
           display: block;
@@ -134,28 +135,28 @@ html, body {
           color: #555;
 
           &:before {
-            content: counter(codedaily-news-list);
-            counter-increment: codedaily-news-list;
-            width: 24px; height: 24px;
-            display: block;
-            position: absolute;
-            top: 0; left: 0;
-            border-radius: 3px;
-            background: #FF8F00;
-            text-align: center;
-            line-height: 24px;
-            color: #FFF;
-            font-size: 0.8em;
-            font-weight: bold;
-            margin-right: 10px;
+              content: counter(codedaily-news-list);
+              counter-increment: codedaily-news-list;
+              display: block;
+              position: absolute;
+              left: 0px;
+              border-radius: 3px;
+              background: #FFF;
+              text-align: right;
+              line-height: 21px;
+              color: #FF8F00;
+              font-size: 1.1em;
+              font-weight: bold;
+              width: 24px;
           }
 
           .post-title {
             color: #333;
             font-weight: 600;
+            font-size: 1.1em;
           }
 
-          &:hover {
+                    &:hover {
             .post-title {
               color: #555;
             }
@@ -164,17 +165,23 @@ html, body {
           &:visited {
             opacity: 0.6;
           }
+        }
 
-          .post-meta {
-            margin: 5px 0;
+        .post-desc {
+            margin: 10px 0 10px 34px;
+            text-align: justify;
+        }
+
+        .post-meta {
+            margin: 5px 0 5px 34px;
             font-size: 0.8em;
 
             span {
-              color: #FF8F00;
-              font-weight: bold;
+                color: #333;
+                font-weight: bold;
             }
-          }
         }
+
       }
     }
 
@@ -217,6 +224,9 @@ html, body {
   .content {
     .main {
       width: 100vw !important;
+      .post-desc {
+          padding-right: 20px;
+      }
     }
   }
 }
