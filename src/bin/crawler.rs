@@ -19,7 +19,7 @@ use dotenv::dotenv;
 use std::env;
 use feed_parser::parser;
 
-fn insert_link(conn: &PgConnection, post_url: &str, post_title: &str, post_time: i32) -> Link {
+fn insert_link(conn: &PgConnection, post_url: &str, post_title: &str, post_desc: &str, post_time: i32) -> Link {
     use schema::links;
 
     let parsed_url = Url::parse(post_url).unwrap();
@@ -27,7 +27,7 @@ fn insert_link(conn: &PgConnection, post_url: &str, post_title: &str, post_time:
         title: post_title.to_string(),
         url: post_url.to_string(),
         time: post_time,
-        body: Some("".to_string()),
+        body: Some(post_desc.to_string()),
         source: Some(parsed_url.host_str().unwrap_or("").to_string()),
     };
     diesel::insert(&new_link).into(links::table)
@@ -43,6 +43,7 @@ fn crawl_site(connection: &PgConnection, site: &Site) -> i32 {
             for entry in feed.entries {
                 let post_title = &entry.title.unwrap_or("".to_string());
                 let post_url = &entry.id;
+                let post_desc = &entry.summary.unwrap_or("".to_string());
                 let pub_date = entry.published;
                 let post_time = pub_date.timestamp() as i32;
                 if post_time > latestcheck {
@@ -50,7 +51,7 @@ fn crawl_site(connection: &PgConnection, site: &Site) -> i32 {
                 }
                 if post_time > site.last_check {
                     println!("{} : {} : {}", post_title, post_url, post_time);
-                    insert_link(&connection, post_url, post_title, post_time);
+                    insert_link(&connection, post_url, post_title, post_desc, post_time);
                 }
             }
             latestcheck
